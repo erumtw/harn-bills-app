@@ -1,0 +1,1 @@
+export const userEndpoint = "https://66331c10f7d50bbd9b4836f5.mockapi.io/harnbill/users";

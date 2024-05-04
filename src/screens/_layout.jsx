@@ -7,15 +7,15 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthLayout from './(auth)/_layout';
 import TabsLayout from './(tabs)/_layout';
 
-const Stack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Auth">
-        <Stack.Screen name="Auth" component={AuthLayout} />
-        <Stack.Screen name="Tabs" component={TabsLayout} />
-      </Stack.Navigator>
+      <RootStack.Navigator initialRouteName="Auth">
+        <RootStack.Screen name="(auth)" component={AuthLayout} options={{headerShown: false}}/>
+        <RootStack.Screen name="(tabs)" component={TabsLayout} options={{headerShown: false}}/>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
