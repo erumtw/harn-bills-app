@@ -5,24 +5,35 @@ import {
   ScrollView,
   FlatList,
   RefreshControl,
+  Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
-import { get_all_bills } from '../../api/constant/services';
+import { get_user_unpaid_bills } from '../../api/constant/services';
 import BillCard from '../../components/BillCard';
+import { useGlobalContext } from '../../contexts/GlobalContext';
+import { Logo } from '../../components/Logo';
 
 const Home = ({ navigation }) => {
+  const { user, isLogged } = useGlobalContext();
+
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setLoading] = useState(false);
+
+  if (!isLogged) {
+    navigation.replace('(auth)', { screen: 'sign-in' });
+  }
 
   const fetchData = async () => {
     try {
       setLoading(true);
 
-      const bills = await get_all_bills();
+      const bills = await get_user_unpaid_bills(user.username);
+      console.log('unpaid bills', bills);
       setData(bills);
     } catch (error) {
       console.log(error.message);
@@ -44,51 +55,58 @@ const Home = ({ navigation }) => {
   return (
     <SafeAreaView className="h-full">
       <View className="flex w-full p-5">
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <BillCard bill={item}/>}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListHeaderComponent={() => (
-            <>
-              <View className="flex-row justify-start mb-5">
-                <Image
-                  source={icons.division}
-                  className="w-10 h-10"
-                  resizeMode="contain"
-                  tintColor="#FF9C01"
-                />
-                <Text className="text-5xl text-secondary-100 font-bold ml-2">
-                  HarnBill
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <BillCard bill={item} />}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={() => (
+              <View>
+                <Text className="text-white">
+                  Well done! you have no unpaid bills
                 </Text>
               </View>
+            )}
+            ListHeaderComponent={() => (
+              <>
+                <Logo />
 
-              <View className="justify-center items-start mb-5">
-                <Text className="font-semibold text-2xl text-white">
-                  Welcome! let's หาร bills
-                </Text>
-                <Text className="font-semibold text-xl text-white">
-                  username
-                </Text>
+                <View className="justify-center items-start mb-5">
+                  <Text className="font-semibold text-2xl text-white">
+                    Welcome!{' '}
+                    <Text className="text-secondary">{user?.username}</Text>
+                  </Text>
+                  <Text className="font-semibold text-xl text-gray-200">
+                    let's หาร bills
+                  </Text>
 
-                <CustomButton
-                  title="Create New Bill"
-                  containerStyles="w-full mt-5 items-start"
-                  icon={icons.plus_2}
-                  handlePress={() =>
-                    navigation.navigate('(tabs)', { screen: 'create' })
-                  }
-                />
+                  <CustomButton
+                    title="Create New Bill"
+                    containerStyles="w-full mt-5 items-start"
+                    icon={icons.plus_2}
+                    handlePress={() =>
+                      navigation.navigate('(tabs)', { screen: 'create' })
+                    }
+                  />
+                </View>
+
+                <Text className="my-3 text-white text-xl">Unpaid Bills</Text>
+              </>
+            )}
+            ListFooterComponent={() => (
+              <View className="items-end">
+                <Pressable onPress={() => navigation.navigate('profile')}>
+                  <Text className="text-gray-100">see all bills</Text>
+                </Pressable>
               </View>
-
-              <Text className="my-3 text-white text-xl">
-                Unpaid Bill
-              </Text>
-            </>
-          )}
-        />
+            )}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
