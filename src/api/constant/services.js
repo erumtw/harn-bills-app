@@ -1,4 +1,5 @@
 // import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../../constants/types';
 import { groupEndpoint, userEndpoint } from './api_endpoint';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,14 +39,38 @@ export const sign_in = async (username) => {
   //   console.log(user);
 };
 
+export const get_current_user = async () => {
+  try {
+    const currentUser = await AsyncStorage.getItem('user');
+    console.log('Current User:', currentUser);
+    return JSON.parse(currentUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const get_all_bills = async () => {
   return await fetch(groupEndpoint)
     .then((res) => res.json())
     .then((data) => {
+      console.log(typeof data);
       console.log(data);
       return data;
     })
     .catch((error) => {
       console.log(error.message);
     });
+};
+
+export const get_user_unpaid_bills = async (username) => {
+  const data = await get_all_bills();
+  console.log('data', data);
+
+  const bills = data.filter((group) => {
+    const isMember = group.members.some((member) => member.username === username);
+    const isUnpaid = !group.is_all_paid;
+    return isMember && isUnpaid;
+  });
+
+  return bills;
 };
