@@ -7,20 +7,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '../../components/FormField.jsx';
 import CustomButton from '../../components/CustomButton.jsx';
 import icons from '../../constants/icons.js';
-// import { useGlobalContext } from "../../context/GlobalProvider.js";
+import { useGlobalContext } from '../../contexts/GlobalContext.js';
 
 const SignIn = ({ navigation }) => {
-  // const { isLoggedIn } = useGlobalContext();
+  const { isLogged, setIsLogged, setUser } = useGlobalContext();
   const [submit, setSubmit] = useState(false);
   const [form, setForm] = useState({
     username: '',
   });
 
-  // console.log(isLoggedIn);
-  // if (isLoggedIn) {
-  //   router.replace("/home");
-  // }
-  // console.log(userEndpoint);
+  console.log(isLogged);
+  if (isLogged) {
+    navigation.replace('(tabs)', { screen: 'home' });
+  }
 
   const onSubmit = async () => {
     if (form.username === '') {
@@ -33,6 +32,8 @@ const SignIn = ({ navigation }) => {
       // check authentication if right navigate to home else throw error
       const user = await sign_in(form.username);
       await AsyncStorage.setItem('user', JSON.stringify(user));
+      setIsLogged(true)
+      setUser(user)
       // console.log(JSON.parse(await AsyncStorage.getItem("user")));
       navigation.replace('(tabs)', { screen: 'home' });
     } catch (error) {
