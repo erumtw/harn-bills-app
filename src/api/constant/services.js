@@ -63,14 +63,36 @@ export const get_all_bills = async () => {
 };
 
 export const get_user_unpaid_bills = async (username) => {
-  const data = await get_all_bills();
-  console.log('data', data);
+  try {
+    const data = await get_all_bills();
+    console.log('data', data);
 
-  const bills = data.filter((group) => {
-    const isMember = group.members.some((member) => member.username === username);
-    const isUnpaid = !group.is_all_paid;
-    return isMember && isUnpaid;
+    const bills = data.filter((group) => {
+      const isMember = group.members.some(
+        (member) => member.username === username,
+      );
+      const isUnpaid = !group.is_all_paid;
+      return isMember && isUnpaid;
+    });
+
+    return bills;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const get_user_divided_price = (username, bill) => {
+  // see each items that user are divider 
+  let sum_price = 0
+  console.log(bill);
+
+  bill.items.forEach(item => {
+    const divided_price = parseFloat((item.price / item.divider.length).toFixed(1));
+
+    if(item.divider.find(divider => divider === username)) {
+      sum_price += divided_price
+    }
   });
 
-  return bills;
+  return sum_price
 };
