@@ -4,13 +4,13 @@ import { Link, useNavigation } from '@react-navigation/native';
 
 const BillCard = ({ bill }) => {
   const navigation = useNavigation();
-  console.log(bill.id);
+  // console.log(bill.id);
   return (
     <Pressable
       onPress={() => {
-        navigation.navigate('group', { billId: bill.id });
+        navigation.navigate('group', { bill: bill });
       }}
-      className="flex-row justify-between items-center w-full p-3 border-2 border-black-200 mb-3 rounded-lg"
+      className="flex-row justify-between items-center w-full p-3 border-2 border-secondary mb-3 rounded-lg"
     >
       <Text className="text-lg font-semibold text-secondary-200">
         {bill.group_name}
