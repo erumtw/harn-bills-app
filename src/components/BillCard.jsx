@@ -17,7 +17,7 @@ const BillCard = ({ bill }) => {
       </Text>
       <View>
         <Text className="text-sm font-semibold text-secondary-200">
-          total price
+          bill total price
         </Text>
         <Text className="text-sm font-semibold text-secondary-200">
           your split price
