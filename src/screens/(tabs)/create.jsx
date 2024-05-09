@@ -135,11 +135,11 @@ const Create = ({ navigation }) => {
           {console.log('items ', form.items)}
         </View>
 
-        {/* <FlatList
+        <FlatList
           data={form.items}
           renderItem={({ item }) => <ItemCard item={item} />}
           className="mt-2"
-        /> */}
+        />
       </View>
     );
   };

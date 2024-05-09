@@ -119,7 +119,7 @@ export const get_user_total_paid = async (username) => {
       total_paid += divided_price;
     });
 
-    return total_paid
+    return total_paid;
   } catch (error) {
     console.log(error);
   }
@@ -130,10 +130,37 @@ export const get_total_bill_price = (bill) => {
     let total_price = 0;
 
     bill.items.forEach((item) => {
-      total_price += item.price
-    })
+      total_price += item.price;
+    });
 
-    return total_price
+    return total_price;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const post_bill = async ({
+  is_all_paid,
+  group_name,
+  members,
+  items,
+}) => {
+  try {
+    const bill = {
+      id: '',
+      is_all_paid: is_all_paid,
+      group_name: group_name,
+      members: members,
+      items: items,
+    };
+
+    await fetch(groupEndpoint, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bill),
+    });
   } catch (error) {
     console.log(error);
   }
