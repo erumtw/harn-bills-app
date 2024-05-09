@@ -11,7 +11,7 @@ export const Logo = () => {
         tintColor="#FF9C01"
       />
       <Text className="text-5xl text-secondary-100 font-bold ml-2">
-        HarnBill
+        HarnBills
       </Text>
     </View>
   );

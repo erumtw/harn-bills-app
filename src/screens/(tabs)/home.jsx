@@ -79,7 +79,9 @@ const Home = ({ navigation }) => {
                 <View className="justify-center items-start mb-5">
                   <Text className="font-semibold text-2xl text-white">
                     Welcome!{' '}
-                    <Text className="text-secondary">{user?.username}</Text>
+                    <Text className="text-secondary text-3xl">
+                      {user?.username}
+                    </Text>
                   </Text>
                   <Text className="font-semibold text-xl text-gray-200">
                     let's หาร bills
@@ -87,14 +89,16 @@ const Home = ({ navigation }) => {
 
                   <CustomButton
                     title="Create New Bill"
-                    containerStyles="w-full mt-5 items-start"
+                    containerStyles="w-full mt-5 items-start h-[55px]"
                     icon={icons.plus_2}
                     handlePress={() =>
                       navigation.navigate('(tabs)', { screen: 'create' })
                     }
+                    itemsStyles="justify-between"
                   />
                 </View>
 
+                <View className="w-full h-0.5 bg-black-200 my-5 rounded-lg" />
                 <Text className="my-3 text-white text-xl">Unpaid Bills</Text>
               </>
             )}

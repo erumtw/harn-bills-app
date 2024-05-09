@@ -1,6 +1,6 @@
-import {View, Text, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {TextInput} from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { TextInput } from 'react-native';
 
 const FormField = ({
   title,
@@ -14,8 +14,14 @@ const FormField = ({
   // console.log(showPassword);
   // console.log(value);
   return (
-    <View className={`space-y-2 ${otherStyles}`}>
-      <Text className="text-base text-gray-200 font-pregular">{title}</Text>
+    <View className={`${otherStyles}`}>
+      {title ? (
+        <Text className="text-base text-gray-200 font-normal mb-2">
+          {title}
+        </Text>
+      ) : (
+        <></>
+      )}
 
       <View className="flex-row px-5 h-[50px] w-full border-2 border-black-100 rounded-lg items-center focus:border-secondary-100">
         <TextInput

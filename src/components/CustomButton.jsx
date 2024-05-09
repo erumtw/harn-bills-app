@@ -6,6 +6,7 @@ const CustomButton = ({
   title,
   isSubmit,
   containerStyles,
+  itemsStyles,
   icon,
 }) => {
   const [submitting, setSubmitting] = useState(isSubmit);
@@ -14,13 +15,18 @@ const CustomButton = ({
     <TouchableOpacity
       onPress={handlePress}
       disabled={submitting}
-      className={`min-h-[55px] px-5 bg-secondary rounded-lg justify-center ${containerStyles} ${
+      className={`px-5 bg-secondary rounded-lg justify-center ${containerStyles} ${
         submitting ? 'opacity-50' : ''
       }`}
     >
-      <View className="flex-row items-center justify-between w-full">
-        <Text className="font-semibold text-lg text-primary ">{title}</Text>
-        {icon && <Image source={icon} className="h-6 w-6" />}
+      <View className={`flex-row items-center w-full ${itemsStyles}`}>
+        {title ? (
+          <Text className="font-semibold text-lg text-primary">{title}</Text>
+        ) : (
+          <></>
+        )}
+
+        {icon ? <Image source={icon} className="h-6 w-6" /> : <></>}
       </View>
     </TouchableOpacity>
   );

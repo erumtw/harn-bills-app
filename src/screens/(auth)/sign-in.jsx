@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TextInput, Alert, Image } from 'react-native';
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sign_in } from '../../api/constant/services.js';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '../../components/FormField.jsx';
 import CustomButton from '../../components/CustomButton.jsx';
@@ -32,8 +32,8 @@ const SignIn = ({ navigation }) => {
       // check authentication if right navigate to home else throw error
       const user = await sign_in(form.username);
       await AsyncStorage.setItem('user', JSON.stringify(user));
-      setIsLogged(true)
-      setUser(user)
+      setIsLogged(true);
+      setUser(user);
       // console.log(JSON.parse(await AsyncStorage.getItem("user")));
       navigation.replace('(tabs)', { screen: 'home' });
     } catch (error) {
@@ -70,8 +70,9 @@ const SignIn = ({ navigation }) => {
           />
           <CustomButton
             title="Sign In"
-            containerStyles="mt-8 items-center"
+            containerStyles="mt-8 items-center h-[55px]"
             handlePress={onSubmit}
+            itemsStyles="justify-center"
           />
 
           {/* <Text className="font-pregular text-gray-100 text-lg text-center mt-5">
