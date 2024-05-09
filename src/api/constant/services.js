@@ -68,9 +68,7 @@ export const get_user_unpaid_bills = async (username) => {
     console.log('data', data);
 
     const bills = data.filter((group) => {
-      const isMember = group.members.some(
-        (member) => member.username === username,
-      );
+      const isMember = group.members.some((member) => member === username);
       const isUnpaid = !group.is_all_paid;
       return isMember && isUnpaid;
     });
@@ -82,17 +80,61 @@ export const get_user_unpaid_bills = async (username) => {
 };
 
 export const get_user_divided_price = (username, bill) => {
-  // see each items that user are divider 
-  let sum_price = 0
+  // see each items that user are divider
+  let sum_price = 0;
   console.log(bill);
 
-  bill.items.forEach(item => {
-    const divided_price = parseFloat((item.price / item.divider.length).toFixed(1));
+  bill.items.forEach((item) => {
+    const divided_price = parseFloat(
+      (item.price / item.divider.length).toFixed(1),
+    );
 
-    if(item.divider.find(divider => divider === username)) {
-      sum_price += divided_price
+    if (item.divider.find((divider) => divider === username)) {
+      sum_price += divided_price;
     }
   });
 
-  return sum_price
+  return sum_price;
+};
+
+export const get_user_all_bills = async (username) => {
+  try {
+    const data = await get_all_bills();
+
+    const userBills = data.filter((group) => group.members.includes(username));
+    console.log('userbills2: ', userBills);
+    return userBills;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const get_user_total_paid = async (username) => {
+  try {
+    let total_paid = 0;
+    const user_bills = await get_user_all_bills(username);
+
+    user_bills.forEach((bill) => {
+      const divided_price = get_user_divided_price(username, bill);
+      total_paid += divided_price;
+    });
+
+    return total_paid
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const get_total_bill_price = (bill) => {
+  try {
+    let total_price = 0;
+
+    bill.items.forEach((item) => {
+      total_price += item.price
+    })
+
+    return total_price
+  } catch (error) {
+    console.log(error);
+  }
 };
