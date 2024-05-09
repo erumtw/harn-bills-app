@@ -1,10 +1,10 @@
 import {
   View,
   Text,
-  ScrollView,
   TextInput,
   Alert,
   FlatList,
+  Pressable,
 } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,9 +15,11 @@ import AddMember from '../../components/AddMember';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import AddDivider from '../../components/AddDivider';
 import ItemCard from '../../components/ItemCard';
+import { post_bill } from '../../api/constant/services';
 
 const Create = ({ navigation }) => {
   const { user } = useGlobalContext();
+  const [itemVisible, setItemVisible] = useState(false);
 
   const [form, setForm] = useState({
     group_name: '',
@@ -34,15 +36,15 @@ const Create = ({ navigation }) => {
   const addItem = () => {
     if (
       form.item_divider.length === 0 ||
-      form.item_price === 0 ||
+      form.item_price === '' ||
       form.item_title === ''
     ) {
-      Alert.alert('Please Enter All item form!');
+      return Alert.alert('Please Enter All item form!');
     }
 
     const newItem = {
       title: form.item_title,
-      price: form.item_price,
+      price: parseFloat(form.item_price).toFixed(1),
       divider: form.item_divider,
     };
 
@@ -50,15 +52,64 @@ const Create = ({ navigation }) => {
     updated_items.push(newItem);
 
     // console.log('updatedItem', updated_items);
-    setForm({ ...form, items: updated_items });
+    try {
+      setForm({ ...form, items: updated_items });
+    } catch (error) {
+    } finally {
+      setForm({ ...form, item_title: '', item_price: '', item_divider: [] });
+    }
     // console.log('items: ', form.items);
+  };
+
+  const onSubmit = async () => {
+    try {
+      const newBill = await post_bill({
+        is_all_paid: false,
+        group_name: form.group_name,
+        items: form.items,
+        members: form.members,
+      });
+
+      console.log(newBill);
+
+      navigation.navigate('group', { bill: newBill });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setForm({
+        group_name: '',
+        members: [user.username],
+        member_name: '',
+        items: [],
+        item_title: '',
+        item_price: 0,
+        item_divider: [],
+      });
+    }
   };
 
   const renderContent = () => {
     return (
       <View className="flex w-full p-5">
-        <Text className="text-center text-secondary-100 text-3xl font-bold mt-5">Create Bill</Text>
-
+        <Pressable
+          className="items-end"
+          onPress={() => {
+            setForm({
+              group_name: '',
+              members: [user.username],
+              member_name: '',
+              items: [],
+              item_title: '',
+              item_price: 0,
+              item_divider: [],
+            });
+          }}
+        >
+          <Text className="text-gray-200 text-sm">reset</Text>
+        </Pressable>
+        <Text className="text-center text-secondary-100 text-3xl font-bold mt-5">
+          Create Bill
+        </Text>
         <View>
           <FormField
             title="Bill Name"
@@ -67,7 +118,6 @@ const Create = ({ navigation }) => {
             value={form.group_name}
           />
         </View>
-
         <Text className="text-base text-gray-200 font-normal mb-2 mt-5">
           Add Members
         </Text>
@@ -87,10 +137,19 @@ const Create = ({ navigation }) => {
                   !form.members.find((member) => member === form.member_name) &&
                   form.member_name !== ''
                 ) {
-                  setForm({
-                    ...form,
-                    members: [...form.members, form.member_name],
-                  });
+                  try {
+                    const updated_member = form.members;
+                    updated_member.push(form.member_name);
+
+                    setForm({
+                      ...form,
+                      members: updated_member,
+                    });
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setForm({ ...form, member_name: '' });
+                  }
                 }
               }}
             />
@@ -98,7 +157,6 @@ const Create = ({ navigation }) => {
           </View>
           <AddMember form={form} setForm={setForm} />
         </View>
-
         <Text className="mt-5 text-base text-gray-200 font-normal mb-2">
           Add Items
         </Text>
@@ -117,7 +175,9 @@ const Create = ({ navigation }) => {
               <TextInput
                 className="flex-1 text-white text-base"
                 value={form.item_price}
-                onChangeText={(e) => setForm({ ...form, item_price: e })}
+                onChangeText={(e) =>
+                  setForm({ ...form, item_price: parseFloat(e) })
+                }
                 placeholder="Price"
                 placeholderTextColor="#7b7b8b"
               />
@@ -134,11 +194,29 @@ const Create = ({ navigation }) => {
           />
           {console.log('items ', form.items)}
         </View>
-
-        <FlatList
-          data={form.items}
-          renderItem={({ item }) => <ItemCard item={item} />}
-          className="mt-2"
+        <Pressable
+          className="items-center  justify-center mt-2"
+          onPress={() => setItemVisible(!itemVisible)}
+        >
+          <Text className="text-gray-500">
+            {!itemVisible ? 'show items' : 'hide items'}
+          </Text>
+        </Pressable>
+        {itemVisible ? (
+          <FlatList
+            data={form.items}
+            renderItem={({ item }) => <ItemCard item={item} />}
+            className="mt-2"
+          />
+        ) : (
+          <></>
+        )}
+        <View className="w-full h-0.5 bg-black-200 my-5 rounded-lg" />
+        <CustomButton
+          title="Submit"
+          itemsStyles="justify-center"
+          containerStyles="h-[45px]"
+          handlePress={onSubmit}
         />
       </View>
     );
@@ -146,7 +224,8 @@ const Create = ({ navigation }) => {
 
   return (
     <SafeAreaView className="h-full">
-      <ScrollView>{renderContent()}</ScrollView>
+      {/* {renderContent()} */}
+      <FlatList data={[1]} renderItem={renderContent} />
     </SafeAreaView>
   );
 };

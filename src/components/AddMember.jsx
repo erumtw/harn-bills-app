@@ -8,14 +8,17 @@ const AddMember = ({ form, setForm }) => {
   console.log(user);
   console.log(form.members);
 
-  // const handleDelete = (memberToDelete) => {
-  //   const updatedMembers = members.filter(
-  //     (member) => member !== memberToDelete,
-  //   );
-  //   // members.pop(memberToDelete);
-  //   // console.log(members);
-  //   setForm({ ...form, members: updatedMembers });
-  // };
+  const handleDelete = (item) => {
+    const updatedMembers = form.members.filter((member) => member !== item);
+
+    const updated_divider_list = form.item_divider.filter((e) => e !== item);
+
+    setForm({
+      ...form,
+      members: updatedMembers,
+      item_divider: updated_divider_list,
+    });
+  };
 
   return (
     <FlatList
@@ -33,20 +36,7 @@ const AddMember = ({ form, setForm }) => {
           {item !== user.username ? (
             <TouchableOpacity
               onPress={() => {
-
-                const updatedMembers = form.members.filter(
-                  (member) => member !== item,
-                );
-
-                const updated_divider_list = form.item_divider.filter(
-                  (e) => e !== item,
-                );
-                
-                setForm({
-                  ...form,
-                  members: updatedMembers,
-                  item_divider: updated_divider_list,
-                });
+                handleDelete(item);
               }}
               className="ml-1 items-center justify-center"
             >

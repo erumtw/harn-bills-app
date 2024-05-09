@@ -15,7 +15,7 @@ const Group = ({ route }) => {
     return (
       <View className="px-3 py-1 mb-2 border-2 border-gray-700 rounded-lg justify-center items-center mr-2">
         <Text className="font-medium text-lg text-secondary">
-          {item === user.username ? 'You' : item}{" "}
+          {item === user.username ? 'You' : item}{' '}
           <Text className="text-white">${user_divided_price}</Text>
         </Text>
       </View>
@@ -28,7 +28,8 @@ const Group = ({ route }) => {
       <View className="py-2 px-3 border-2 border-gray-700 rounded-lg justify-between items-start mb-2">
         <View className="w-full flex-row justify-between items-center mb-1">
           <Text className="text-lg font-semibold text-white">
-            {item.title[0].toUpperCase()}{item.title.slice(1)}
+            {item.title[0].toUpperCase()}
+            {item.title.slice(1)}
           </Text>
           <Text className="text-gray-100 text-sm">
             ${item.price}/{item.divider.length} ={' '}
@@ -72,7 +73,7 @@ const Group = ({ route }) => {
         <FlatList
           // numColumns={2}
           data={bill.items}
-          renderItem={({item}) => <ItemCard item={item}/>}
+          renderItem={({ item }) => <ItemCard item={item} />}
           // keyExtractor={(item) => `${item.title}-${item.price}`}
         />
       </View>
@@ -81,11 +82,7 @@ const Group = ({ route }) => {
 
   return (
     <SafeAreaView className="h-full bg-primary">
-      <FlatList
-        data={[1]}
-        renderItem={() => renderContent()}
-        // keyExtractor={() => 'dummy-key'} // Provide a dummy key
-      />
+      <FlatList data={[1]} renderItem={() => renderContent()} />
     </SafeAreaView>
   );
 };

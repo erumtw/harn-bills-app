@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../../contexts/GlobalContext';
@@ -25,6 +26,7 @@ const Profile = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -48,7 +50,13 @@ const Profile = ({ navigation }) => {
     fetchData();
   }, []);
 
-  console.log('user bills ', data);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
+
+  // console.log('user bills ', data);
 
   const sign_out = async () => {
     await AsyncStorage.removeItem('user');
@@ -63,61 +71,63 @@ const Profile = ({ navigation }) => {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <View className="p-5">
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
-            ListEmptyComponent={() => (
-              <View className="w-full justify-center items-center">
-                <Text className="text-white">Well done! you have no bills</Text>
-                <CustomButton
-                  title="Let's Create Bill!"
-                  itemsStyles="items-center"
-                  containerStyles="h-[40px] my-3"
-                />
-              </View>
-            )}
-            ListHeaderComponent={() => (
-              <View className="w-full justify-center items-center my-5">
-                <Image
-                  source={icons.profile}
-                  className="w-16 h-16"
-                  tintColor="#FF9C01"
-                />
+        <FlatList
+          contentContainerStyle={{ padding: 20 }}
+          data={data}
+          keyExtractor={(item) => item.id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={() => (
+            <View className="w-full justify-center items-center">
+              <Text className="text-white">Well done! you have no bills</Text>
+              <CustomButton
+                title="Let's Create Bill!"
+                itemsStyles="items-center"
+                containerStyles="h-[40px] my-3"
+              />
+            </View>
+          )}
+          ListHeaderComponent={() => (
+            <View className="w-full justify-center items-center my-5">
+              <Image
+                source={icons.profile}
+                className="w-16 h-16"
+                tintColor="#FF9C01"
+              />
 
-                <View className="flex-row justify-center items-center mt-3">
-                  <Text className="text-2xl font-semibold text-secondary mr-2">
-                    {user.username[0].toUpperCase()}
-                    {user.username.slice(1)}
-                  </Text>
-                  <Pressable
-                    className="justify-center items-center"
-                    onPress={sign_out}
-                  >
-                    <Image
-                      source={icons.log_out}
-                      className="w-8 h-8"
-                      tintColor="#FF9C01"
-                    />
-                  </Pressable>
-                </View>
-
-                <View className="flex-row ustify-between mt-3">
-                  <ProfileInfo
-                    title="Bill Count"
-                    subtitle={data.length}
-                    otherStyles="mr-5"
+              <View className="flex-row justify-center items-center mt-3">
+                <Text className="text-2xl font-semibold text-secondary mr-2">
+                  {user.username[0].toUpperCase()}
+                  {user.username.slice(1)}
+                </Text>
+                <Pressable
+                  className="justify-center items-center"
+                  onPress={sign_out}
+                >
+                  <Image
+                    source={icons.log_out}
+                    className="w-8 h-8"
+                    tintColor="#FF9C01"
                   />
-                  <ProfileInfo title="Total Paid" subtitle={`$${totalPrice}`} />
-                </View>
-
-                <View className="w-full h-0.5 bg-black-200 my-5 rounded-lg" />
-                <Text className="text-lg text-gray-300">Bills History</Text>
+                </Pressable>
               </View>
-            )}
-            renderItem={({ item }) => <BillCard bill={item} />}
-          />
-        </View>
+
+              <View className="flex-row ustify-between mt-3">
+                <ProfileInfo
+                  title="Bill Count"
+                  subtitle={data.length}
+                  otherStyles="mr-5"
+                />
+                <ProfileInfo title="Total Paid" subtitle={`$${totalPrice}`} />
+              </View>
+
+              <View className="w-full h-0.5 bg-black-200 my-5 rounded-lg" />
+              <Text className="text-lg text-gray-300">Bills History</Text>
+            </View>
+          )}
+          renderItem={({ item }) => <BillCard bill={item} />}
+        />
       )}
     </SafeAreaView>
   );

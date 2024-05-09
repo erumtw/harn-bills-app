@@ -85,16 +85,14 @@ export const get_user_divided_price = (username, bill) => {
   console.log(bill);
 
   bill.items.forEach((item) => {
-    const divided_price = parseFloat(
-      (item.price / item.divider.length).toFixed(1),
-    );
+    const divided_price = parseFloat(item.price / item.divider.length);
 
     if (item.divider.find((divider) => divider === username)) {
       sum_price += divided_price;
     }
   });
 
-  return sum_price;
+  return parseFloat(sum_price).toFixed(1);
 };
 
 export const get_user_all_bills = async (username) => {
@@ -116,10 +114,10 @@ export const get_user_total_paid = async (username) => {
 
     user_bills.forEach((bill) => {
       const divided_price = get_user_divided_price(username, bill);
-      total_paid += divided_price;
+      total_paid += parseFloat(divided_price);
     });
 
-    return total_paid;
+    return parseFloat(total_paid).toFixed(1);
   } catch (error) {
     console.log(error);
   }
@@ -130,10 +128,10 @@ export const get_total_bill_price = (bill) => {
     let total_price = 0;
 
     bill.items.forEach((item) => {
-      total_price += item.price;
+      total_price += parseFloat(item.price);
     });
 
-    return total_price;
+    return parseFloat(total_price).toFixed(1);
   } catch (error) {
     console.log(error);
   }
@@ -154,13 +152,16 @@ export const post_bill = async ({
       items: items,
     };
 
-    await fetch(groupEndpoint, {
+    const res = await fetch(groupEndpoint, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(bill),
     });
+
+    const newBill = await res.json();
+    return newBill;
   } catch (error) {
     console.log(error);
   }
