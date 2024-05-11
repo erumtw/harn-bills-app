@@ -5,6 +5,7 @@ import {
   Alert,
   FlatList,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +21,7 @@ import { post_bill } from '../../api/constant/services';
 const Create = ({ navigation }) => {
   const { user } = useGlobalContext();
   const [itemVisible, setItemVisible] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     group_name: '',
@@ -37,9 +39,14 @@ const Create = ({ navigation }) => {
     if (
       form.item_divider.length === 0 ||
       form.item_price === '' ||
-      form.item_title === ''
+      form.item_title === '' ||
+      form.item_price === 0 || 
+      isNaN(form.item_price)
     ) {
-      return Alert.alert('Please Enter All item form!');
+      return Alert.alert(
+        'Invalid Input!',
+        'item name, divider, price can not be empty, or price can not be 0 and must be number',
+      );
     }
 
     const newItem = {
@@ -63,6 +70,14 @@ const Create = ({ navigation }) => {
 
   const onSubmit = async () => {
     try {
+      if (form.group_name === '' || form.items.length === 0) {
+        return Alert.alert(
+          'Please fill all nessesary form',
+          "bill name or items can't be empty",
+        );
+      }
+
+      setLoading(true);
       const newBill = await post_bill({
         is_all_paid: false,
         group_name: form.group_name,
@@ -85,6 +100,8 @@ const Create = ({ navigation }) => {
         item_price: 0,
         item_divider: [],
       });
+
+      setLoading(false);
     }
   };
 
@@ -105,9 +122,9 @@ const Create = ({ navigation }) => {
             });
           }}
         >
-          <Text className="text-gray-200 text-sm">reset</Text>
+          <Text className="text-gray-300 text-sm">reset</Text>
         </Pressable>
-        <Text className="text-center text-secondary-100 text-3xl font-bold mt-5">
+        <Text className="text-center text-secondary-100 text-3xl font-bold mt-3">
           Create Bill
         </Text>
         <View>
@@ -175,9 +192,9 @@ const Create = ({ navigation }) => {
               <TextInput
                 className="flex-1 text-white text-base"
                 value={form.item_price}
-                onChangeText={(e) =>
-                  setForm({ ...form, item_price: parseFloat(e) })
-                }
+                onChangeText={(e) => {
+                  setForm({ ...form, item_price: parseFloat(e) });
+                }}
                 placeholder="Price"
                 placeholderTextColor="#7b7b8b"
               />
@@ -224,8 +241,11 @@ const Create = ({ navigation }) => {
 
   return (
     <SafeAreaView className="h-full">
-      {/* {renderContent()} */}
-      <FlatList data={[1]} renderItem={renderContent} />
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <FlatList data={[1]} renderItem={renderContent} />
+      )}
     </SafeAreaView>
   );
 };
