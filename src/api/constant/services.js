@@ -28,7 +28,8 @@ export const sign_in = async (username) => {
         body: JSON.stringify(newUser),
       });
 
-      return newUser;
+      const data = await postRes.json()
+      return data
     }
 
     return currentUser;
@@ -162,6 +163,28 @@ export const post_bill = async ({
 
     const newBill = await res.json();
     return newBill;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const set_bill_paid_status = async (billId, isPaid) => {
+  try {
+
+    const response = await fetch(`${groupEndpoint}/${billId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ is_all_paid: isPaid }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update bill paid status');
+    }
+
+    const updatedBill = await response.json();
+    return updatedBill;
   } catch (error) {
     console.log(error);
   }
