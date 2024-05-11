@@ -20,10 +20,15 @@ const BillCard = ({ bill }) => {
       }}
       className="flex-row justify-between items-center w-full p-3 border-2 border-secondary mb-3 rounded-lg"
     >
-      <Text className="text-lg font-semibold text-secondary-200">
-        {bill.group_name[0].toUpperCase()}
-        {bill.group_name.slice(1)}
-      </Text>
+      <View>
+        <Text className="text-lg font-semibold text-secondary-200">
+          {bill.group_name[0].toUpperCase()}
+          {bill.group_name.slice(1)}
+        </Text>
+        <Text className="text-sm font-semibold text-gray-500">
+          {bill.is_all_paid ? 'Cleared' : 'Unpaid'}
+        </Text>
+      </View>
       <View className="items-end">
         <Text className="text-sm font-semibold text-gray-200">
           Total:{' '}
@@ -31,9 +36,7 @@ const BillCard = ({ bill }) => {
         </Text>
         <Text className="text-sm font-semibold  text-gray-200">
           You:{' '}
-          <Text className="text-white text-base">
-            ${user_divided_price}
-          </Text>
+          <Text className="text-white text-base">${user_divided_price}</Text>
         </Text>
       </View>
     </Pressable>
