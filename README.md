@@ -3,6 +3,7 @@
 easy bill split with your friend, mobile app 
 หารบิลกับเพื่อนๆ 
 
+### this project i use https://mockapi.io/ 
 ### Add your mock api
 add `api_endpoints.js` to dir `/home/erumtw/Projects/react native/react-native-plain/HarnBills/src/api/constant/api_endpoints.js`
 
