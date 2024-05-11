@@ -105,7 +105,7 @@ const Home = ({ navigation }) => {
             ListFooterComponent={() => (
               <View className="items-end">
                 <Pressable onPress={() => navigation.navigate('profile')}>
-                  <Text className="text-gray-100">see all bills</Text>
+                  <Text className="text-gray-500">see all bills</Text>
                 </Pressable>
               </View>
             )}

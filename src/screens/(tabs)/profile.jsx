@@ -59,11 +59,18 @@ const Profile = ({ navigation }) => {
   // console.log('user bills ', data);
 
   const sign_out = async () => {
-    await AsyncStorage.removeItem('user');
-    // console.log(user);
-    setIsLogged(false);
-    setUser(null);
-    navigation.replace('(auth)', { screen: 'sign-in' });
+    try {
+      await AsyncStorage.removeItem('user');
+      // console.log(user);
+      setLoading(true);
+      setIsLogged(false);
+      navigation.replace('(auth)', { screen: 'sign-in' });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setUser(null);
+      setLoading(false);
+    }
   };
 
   return (
