@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const CustomButton = ({
   handlePress,
@@ -9,14 +9,12 @@ const CustomButton = ({
   itemsStyles,
   icon,
 }) => {
-  const [submitting, setSubmitting] = useState(isSubmit);
-
   return (
     <TouchableOpacity
       onPress={handlePress}
-      disabled={submitting}
+      disabled={isSubmit}
       className={`px-5 bg-secondary rounded-lg justify-center ${containerStyles} ${
-        submitting ? 'opacity-50' : ''
+        isSubmit ? 'opacity-50' : ''
       }`}
     >
       <View className={`flex-row items-center w-full ${itemsStyles}`}>
