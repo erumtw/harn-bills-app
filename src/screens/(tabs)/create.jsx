@@ -117,7 +117,7 @@ const Create = ({ navigation }) => {
               member_name: '',
               items: [],
               item_title: '',
-              item_price: 0,
+              item_price: '',
               item_divider: [],
             });
           }}
