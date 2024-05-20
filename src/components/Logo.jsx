@@ -8,9 +8,9 @@ export const Logo = () => {
         source={icons.division}
         className="w-10 h-10"
         resizeMode="contain"
-        tintColor="#FF9C01"
+        tintColor="#ff8e3c"
       />
-      <Text className="text-5xl text-secondary-100 font-bold ml-2">
+      <Text className="text-5xl text-secondary font-bold ml-2">
         HarnBills
       </Text>
     </View>

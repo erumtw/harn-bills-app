@@ -76,3 +76,5 @@ yarn-error.log
 
 src/api/constant/api_endpoint.js
 src/api/constant/endpoints.js
+
+android/app/google-services.json

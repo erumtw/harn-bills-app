@@ -1,12 +1,11 @@
 import {
   View,
   Text,
-  Pressable,
-  ScrollView,
   Image,
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../../contexts/GlobalContext';
@@ -87,7 +86,9 @@ const Profile = ({ navigation }) => {
           }
           ListEmptyComponent={() => (
             <View className="w-full justify-center items-center">
-              <Text className="text-white">Well done! you have no bills</Text>
+              <Text className="text-headline">
+                Well done! you have no bills
+              </Text>
               <CustomButton
                 title="Let's Create Bill!"
                 itemsStyles="items-center"
@@ -100,27 +101,27 @@ const Profile = ({ navigation }) => {
               <Image
                 source={icons.profile}
                 className="w-16 h-16"
-                tintColor="#FF9C01"
+                tintColor="#ff8e3c"
               />
 
               <View className="flex-row justify-center items-center mt-3">
-                <Text className="text-2xl font-semibold text-secondary mr-2">
+                <Text className="text-2xl font-bold text-headline mr-2">
                   {user.username[0].toUpperCase()}
                   {user.username.slice(1)}
                 </Text>
-                <Pressable
+                <TouchableOpacity
                   className="justify-center items-center"
                   onPress={sign_out}
                 >
                   <Image
                     source={icons.log_out}
                     className="w-8 h-8"
-                    tintColor="#FF9C01"
+                    tintColor="#ff8e3c"
                   />
-                </Pressable>
+                </TouchableOpacity>
               </View>
 
-              <View className="flex-row ustify-between mt-3">
+              <View className="flex-row justify-between mt-3">
                 <ProfileInfo
                   title="Bill Count"
                   subtitle={data.length}
@@ -129,8 +130,10 @@ const Profile = ({ navigation }) => {
                 <ProfileInfo title="Total Paid" subtitle={`$${totalPrice}`} />
               </View>
 
-              <View className="w-full h-0.5 bg-black-200 my-5 rounded-lg" />
-              <Text className="text-lg text-gray-300">Bills History</Text>
+              <View className="w-full h-[1px] bg-headline my-5 rounded-lg" />
+              <Text className="text-lg text-headline font-semibold">
+                Bills History
+              </Text>
             </View>
           )}
           renderItem={({ item }) => <BillCard bill={item} />}

@@ -5,6 +5,7 @@ import Create from './create';
 import Home from './home';
 import Profile from './profile';
 import icons from '../../constants/icons';
+import Contact from './contact';
 
 const Tabs = createBottomTabNavigator();
 
@@ -35,15 +36,15 @@ const TabLayout = () => {
   return (
     <>
       <Tabs.Navigator
-        sceneContainerStyle={{ backgroundColor: '#161622' }}
+        sceneContainerStyle={{ backgroundColor: '#fef6e4' }}
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: '#FFA001',
-          tabBarInactiveTintColor: '#CDCDE0',
+          tabBarActiveTintColor: '#ff8e3c',
+          tabBarInactiveTintColor: '#2a2a2a',
           tabBarStyle: {
-            backgroundColor: '#161622',
+            backgroundColor: '#fef6e4',
             borderTopWidth: 1,
-            borderTopColor: '#232533',
+            borderTopColor: '#fffffe',
             height: 70,
           },
         }}
@@ -83,6 +84,23 @@ const TabLayout = () => {
         />
 
         <Tabs.Screen
+          name="contact"
+          component={Contact}
+          options={{
+            title: 'Contact',
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.contact}
+                color={color}
+                name="Contact"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
           name="profile"
           component={Profile}
           options={{
@@ -100,8 +118,7 @@ const TabLayout = () => {
         />
       </Tabs.Navigator>
 
-
-      <StatusBar backgroundColor="#161622" style="light" />
+      <StatusBar backgroundColor='#fef6e4' barStyle="dark-content" />
     </>
   );
 };

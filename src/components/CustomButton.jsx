@@ -13,13 +13,13 @@ const CustomButton = ({
     <TouchableOpacity
       onPress={handlePress}
       disabled={isSubmit}
-      className={`px-5 bg-secondary rounded-lg justify-center ${containerStyles} ${
+      className={`px-5 bg-highlight rounded-lg  justify-center ${containerStyles} ${
         isSubmit ? 'opacity-50' : ''
       }`}
     >
       <View className={`flex-row items-center w-full ${itemsStyles}`}>
         {title ? (
-          <Text className="font-semibold text-lg text-primary">{title}</Text>
+          <Text className="font-semibold text-lg text-button_text">{title}</Text>
         ) : (
           <></>
         )}

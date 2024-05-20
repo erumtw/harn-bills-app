@@ -54,8 +54,8 @@ export const get_all_bills = async () => {
   return await fetch(groupEndpoint)
     .then((res) => res.json())
     .then((data) => {
-      console.log(typeof data);
-      console.log(data);
+      // console.log(typeof data);
+      // console.log(data);
       return data;
     })
     .catch((error) => {
@@ -66,7 +66,7 @@ export const get_all_bills = async () => {
 export const get_user_unpaid_bills = async (username) => {
   try {
     const data = await get_all_bills();
-    console.log('data', data);
+    // console.log('data', data);
 
     const bills = data.filter((group) => {
       const isMember = group.members.some((member) => member === username);
@@ -83,7 +83,7 @@ export const get_user_unpaid_bills = async (username) => {
 export const get_user_divided_price = (username, bill) => {
   // see each items that user are divider
   let sum_price = 0;
-  console.log(bill);
+  // console.log(bill);
 
   bill.items.forEach((item) => {
     const divided_price = parseFloat(item.price / item.divider.length);

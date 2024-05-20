@@ -5,8 +5,8 @@ import icons from '../constants/icons';
 
 const AddMember = ({ form, setForm }) => {
   const { user } = useGlobalContext();
-  console.log(user);
-  console.log(form.members);
+  // console.log(user);
+  // console.log(form.members);
 
   const handleDelete = (item) => {
     const updatedMembers = form.members.filter((member) => member !== item);
@@ -25,10 +25,18 @@ const AddMember = ({ form, setForm }) => {
       horizontal
       data={form.members}
       keyExtractor={(item) => item}
+      ListHeaderComponent={() => (
+        <TouchableOpacity
+          onPress={()=>{}}
+          className="px-3 py-1 mb-2 border-2 border-gray-700 rounded-lg justify-center items-center mr-2 "
+        >
+          <Image source={icons.add_user} className="w-6 h-6" tintColor="#ff8e3c"/>
+        </TouchableOpacity>
+      )}
       renderItem={({ item }) => (
         <View className="px-3 py-1 mb-2 border-2 border-gray-700 rounded-lg justify-center items-center mr-2 flex-row">
           {/* {console.log("item", item)} */}
-          <Text className="font-sm text-base text-secondary">
+          <Text className="font-sm text-base text-button font-bold">
             {item === user.username
               ? 'You'
               : `${item[0].toUpperCase()}${item.slice(1)}`}
