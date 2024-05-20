@@ -36,7 +36,7 @@ const AddDivider = ({ form, setForm }) => {
           onPress={addAllDivider}
           className="px-3 py-1 mb-2 border-2 border-gray-700 rounded-lg justify-center items-center mr-2 "
         >
-          <Text className="font-sm text-base text-secondary">ALL</Text>
+          <Text className="font-sm text-base text-gray-700 font-bold">ALL</Text>
         </TouchableOpacity>
       )}
       renderItem={({item}) => (

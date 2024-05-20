@@ -8,9 +8,9 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { sign_in } from '../../api/constant/services.js';
+import { sign_in } from '../../api/constant/services.js';
 // import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '../../components/FormField.jsx';
@@ -18,27 +18,30 @@ import CustomButton from '../../components/CustomButton.jsx';
 import icons from '../../constants/icons.js';
 import { useGlobalContext } from '../../contexts/GlobalContext.js';
 import { Logo } from '../../components/Logo.jsx';
-import { signIn } from '../../firebase/services.js';
+import { signUp } from '../../firebase/services.js';
 
 const SignIn = ({ navigation }) => {
   const { isLogged, setIsLogged, setUser } = useGlobalContext();
 
-  useEffect(() => {
-    // console.log(isLogged);
-    if (isLogged) {
-      navigation.replace('(tabs)', { screen: 'home' });
-    }
-  }, [isLogged, navigation]);
+  console.log(isLogged);
+  if (isLogged) {
+    navigation.replace('(tabs)', { screen: 'home' });
+  }
 
   const [submit, setSubmit] = useState(false);
   const [form, setForm] = useState({
+    username: '',
     phone: '',
   });
 
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async () => {
-    if (form.phone === '' || form.phone.replace(/\D/g, '').length !== 10) {
+    if (
+      form.username === '' ||
+      form.phone === '' ||
+      form.phone.replace(/\D/g, '').length !== 10
+    ) {
       Alert.alert(
         'Invalid Form',
         'field can not be empty, and phone-number must be digit of 10 length',
@@ -50,30 +53,18 @@ const SignIn = ({ navigation }) => {
     setIsLoading(true);
     try {
       // check authentication if right navigate to home else throw error
-      const user = await signIn(form.phone);
-      if (!user) {
-        Alert.alert(
-          'Invalid phone-number',
-          'Account not exists, Please sign up',
-        );
-        return;
-      }
-
-      console.log('userData:', user);
-
+      const user = await signUp(form.username, form.phone);
+      console.log(user);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       setIsLogged(true);
       setUser(user);
-
-      // navigation.replace('(tabs)', { screen: 'home' });
+      console.log(JSON.parse(await AsyncStorage.getItem('user')));
+      navigation.replace('(tabs)', { screen: 'home' });
     } catch (error) {
-      Alert.alert('Invalid Sign In', error.message);
+      Alert.alert('Invalid Sign Up', error.message);
     } finally {
       setSubmit(false);
       setIsLoading(false);
-      setForm({
-        phone: '',
-      });
     }
   };
 
@@ -86,14 +77,19 @@ const SignIn = ({ navigation }) => {
           </View>
         ) : (
           <View className="justify-center px-9">
-            <View className="w-full mt-[20vh]">
-              <View className="flex-row justify-start mb-5">
+            <View className="w-full mt-[17vh]">
+              <View className="flex-row justify-start ">
                 <Logo />
               </View>
-              <Text className="text-headline text-2xl font-semibold">
-                SIGN IN
-              </Text>
+              <Text className="text-headline text-2xl font-bold">SIGN UP</Text>
             </View>
+
+            <FormField
+              title="username"
+              handleChange={(e) => setForm({ ...form, username: e })}
+              value={form.username}
+              otherStyles="mt-5"
+            />
 
             <FormField
               title="phone-number"
@@ -101,8 +97,9 @@ const SignIn = ({ navigation }) => {
               value={form.phone}
               otherStyles="mt-5"
             />
+
             <CustomButton
-              title="Sign In"
+              title="Sign Up"
               containerStyles="mt-8 items-center h-[45px]"
               handlePress={onSubmit}
               itemsStyles="justify-center"
@@ -111,11 +108,11 @@ const SignIn = ({ navigation }) => {
 
             <View className="flex-row items-center justify-center mt-2">
               <Text className="font-medium text-paragraph text-md text-center ">
-                Do not have an account?{' '}
+                Already have an account?{' '}
               </Text>
-              <TouchableOpacity onPress={() => navigation.replace('sign-up')}>
+              <TouchableOpacity onPress={() => navigation.replace('sign-in')}>
                 <Text className="text-md text-headline font-semibold">
-                  Sign Up
+                  Sign In
                 </Text>
               </TouchableOpacity>
             </View>

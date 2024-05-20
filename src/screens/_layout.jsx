@@ -1,17 +1,29 @@
 // In App.js in a new project
 
 import * as React from 'react';
-import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthLayout from './(auth)/_layout';
 import TabsLayout from './(tabs)/_layout';
 import Group from './group/bill';
 import { GlobalProvider } from '../contexts/GlobalContext';
+import { PermissionsAndroid } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 
 const RootStack = createNativeStackNavigator();
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
-function App() {
+
+const App = () => {
+  const getToken = async () => {
+    const token = await messaging().getToken();
+    console.log(token);
+  };
+
+  React.useEffect(() => {
+    // getToken();
+  }, []);
+
   return (
     <GlobalProvider>
       <NavigationContainer>
@@ -35,6 +47,6 @@ function App() {
       </NavigationContainer>
     </GlobalProvider>
   );
-}
+};
 
 export default App;

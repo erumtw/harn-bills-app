@@ -7,12 +7,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#161622',
-        secondary: {
-          DEFAULT: '#FF9C01',
-          100: '#FF9001',
-          200: '#FF8E01',
-        },
+        primary: '#fef6e4',
+        secondary: '#ff8e3c',
         black: {
           DEFAULT: '#000',
           100: '#1E1E2D',
@@ -21,6 +17,14 @@ module.exports = {
         gray: {
           100: '#CDCDE0',
         },
+        headline: '#0d0d0d',
+        paragraph: '#2a2a2a',
+        button: '#ff8e3c',
+        button_text: '#0d0d0d',
+        stroke: '#0d0d0d',
+        highlight: '#ff8e3c',
+        third: '#fffffe',
+        tertiary: '#d9376e'
       },
       fontFamily: {
         pthin: ['Poppins-Thin', 'sans-serif'],

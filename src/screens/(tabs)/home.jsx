@@ -5,8 +5,8 @@ import {
   ScrollView,
   FlatList,
   RefreshControl,
-  Pressable,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import icons from '../../constants/icons';
@@ -16,6 +16,8 @@ import { get_user_unpaid_bills } from '../../api/constant/services';
 import BillCard from '../../components/BillCard';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import { Logo } from '../../components/Logo';
+import firestore from '@react-native-firebase/firestore';
+import { getUserId, getUserUnpaidBill } from '../../firebase/services';
 
 const Home = ({ navigation }) => {
   const { user, isLogged } = useGlobalContext();
@@ -32,8 +34,13 @@ const Home = ({ navigation }) => {
     try {
       setLoading(true);
 
-      const bills = await get_user_unpaid_bills(user.username);
-      console.log('unpaid bills', bills);
+      // const userIdawait getUserId(user.phone));
+      const bills = await getUserUnpaidBill(user.id);
+
+      // console.log('unpaid bills', bills);
+      if(!bills) {
+        return;
+      }
       setData(bills);
     } catch (error) {
       console.log(error.message);
@@ -67,7 +74,7 @@ const Home = ({ navigation }) => {
             }
             ListEmptyComponent={() => (
               <View>
-                <Text className="text-white">
+                <Text className="text-paragraph font-semibold">
                   Well done! you have no unpaid bills
                 </Text>
               </View>
@@ -77,13 +84,13 @@ const Home = ({ navigation }) => {
                 <Logo />
 
                 <View className="justify-center items-start mb-5">
-                  <Text className="font-semibold text-2xl text-white">
+                  <Text className="font-semibold text-2xl text-headline">
                     Welcome!{' '}
                     <Text className="text-secondary text-3xl">
                       {user?.username}
                     </Text>
                   </Text>
-                  <Text className="font-semibold text-xl text-gray-200">
+                  <Text className="font-semibold text-xl text-paragraph">
                     let's หาร bills
                   </Text>
 
@@ -98,15 +105,21 @@ const Home = ({ navigation }) => {
                   />
                 </View>
 
-                <View className="w-full h-0.5 bg-black-200 my-5 rounded-lg" />
-                <Text className="my-3 text-white text-xl">Unpaid Bills</Text>
+                <View className="w-full h-[1px] bg-stroke my-5 rounded-lg" />
+                <Text className="my-3 text-highlight text-xl font-semibold">
+                  Unpaid Bills
+                </Text>
               </>
             )}
             ListFooterComponent={() => (
               <View className="items-end">
-                <Pressable onPress={() => navigation.navigate('profile')}>
-                  <Text className="text-gray-500">see all bills</Text>
-                </Pressable>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('profile')}
+                >
+                  <Text className="text-paragraph font-semibold">
+                    see all bills
+                  </Text>
+                </TouchableOpacity>
               </View>
             )}
           />
