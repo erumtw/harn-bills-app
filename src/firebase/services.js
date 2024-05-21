@@ -25,6 +25,7 @@ export const getUserData = async (userId) => {
 
     if (userDoc.exists) {
       const userData = userDoc.data();
+      userData.id = userId;
       return userData;
     } else {
       console.log(userId, ' not exist');
@@ -41,8 +42,8 @@ export const signIn = async (phone) => {
     const userId = await getUserId(phone);
     if (userId) {
       const userData = await getUserData(userId);
-      console.log('Sign In Success for ', userData.username);
-
+      console.log('Sign In Success for ', userData);
+      // console.log(userData);
       return userData;
     }
   } catch (error) {
@@ -74,6 +75,7 @@ export const signUp = async (username, phone) => {
     // Get the newly created user data
     const userDoc = await docRef.get();
     const userData = userDoc.data();
+    userData.id = userDoc.id;
 
     return userData;
   } catch (error) {
@@ -82,4 +84,89 @@ export const signUp = async (username, phone) => {
   }
 };
 
-export const getUserUnpaidBill = async (userId) => {};
+export const getUserBills = async (user) => {
+  try {
+    const billQuery = db
+      .collection('bills')
+      .where('members', 'array-contains-any', [{ memberPhone: user.phone }]);
+
+    const querySnapshot = await billQuery.get();
+
+    const userBills = [];
+
+    querySnapshot.forEach((doc) => {
+      const billData = doc.data();
+      billData.id = doc.id;
+      userBills.push(billData);
+    });
+
+    return userBills;
+  } catch (error) {}
+};
+
+export const getUserUnpaidBill = async (user) => {
+  try {
+    const billQuery = db
+      .collection('bills')
+      .where('members', 'array-contains-any', [
+        {
+          memberPhone: user.phone,
+          membername: user.username,
+          isPaid: false,
+        },
+      ]);
+
+    const querySnapshot = await billQuery.get();
+
+    const userUnpaidBills = [];
+
+    querySnapshot.forEach((doc) => {
+      const billData = doc.data();
+      billData.id = doc.id;
+      userUnpaidBills.push(billData);
+    });
+
+    return userUnpaidBills;
+  } catch (error) {}
+};
+
+export const getUserDividedPrice = async (userPhone, billId) => {
+  try {
+    let sum = 0;
+    const billItemsQuery = await db
+      .collection('items')
+      .where('bill_id', '==', billId)
+      .where('divider', 'array-contains', userPhone)
+      .get();
+
+    billItemsQuery.forEach((doc) => {
+      const item = doc.data();
+      // console.log("item:", item);
+      const divided_price = item.price / item.divider.length;
+      sum += divided_price;
+    });
+
+    return parseFloat(sum).toFixed(1);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const getBillTotalPrice = async (billId) => {
+  try {
+    let sum = 0;
+    const itemsQuery = await db
+      .collection('items')
+      .where('bill_id', '==', billId)
+      .get();
+
+    itemsQuery.forEach((doc) => {
+      const itemData = doc.data();
+      sum += itemData.price;
+    });
+
+    return parseFloat(sum).toFixed(1);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
