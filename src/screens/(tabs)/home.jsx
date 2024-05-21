@@ -22,7 +22,7 @@ import { getUserId, getUserUnpaidBill } from '../../firebase/services';
 const Home = ({ navigation }) => {
   const { user, isLogged } = useGlobalContext();
 
-  const [data, setData] = useState([]);
+  const [billData, setBillData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
@@ -34,14 +34,15 @@ const Home = ({ navigation }) => {
     try {
       setLoading(true);
 
-      // const userIdawait getUserId(user.phone));
-      const bills = await getUserUnpaidBill(user.id);
+      // const user.id = await getUserId(user.phone);
+      const bills = await getUserUnpaidBill(user);
+      console.log('unpaid bills of', user.id, ' : ', bills);
 
-      // console.log('unpaid bills', bills);
-      if(!bills) {
-        return;
+      if (bills.length > 0) {
+        setBillData(bills);
+      } else {
+        console.log('No unpaid bills found for user', user.phone);
       }
-      setData(bills);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -66,9 +67,13 @@ const Home = ({ navigation }) => {
           <ActivityIndicator />
         ) : (
           <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <BillCard bill={item} />}
+            data={billData}
+            // keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <>
+                <BillCard bill={item} />
+              </>
+            )}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -105,7 +110,7 @@ const Home = ({ navigation }) => {
                   />
                 </View>
 
-                <View className="w-full h-[1px] bg-stroke my-5 rounded-lg" />
+                <View className="w-full h-[1px] bg-headline my-2 rounded-xl opacity-50" />
                 <Text className="my-3 text-highlight text-xl font-semibold">
                   Unpaid Bills
                 </Text>

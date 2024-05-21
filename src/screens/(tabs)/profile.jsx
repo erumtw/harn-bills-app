@@ -23,7 +23,7 @@ import CustomButton from '../../components/CustomButton';
 const Profile = ({ navigation }) => {
   const { user, setUser, setIsLogged } = useGlobalContext();
   const [data, setData] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [totalPrice, setTotalPrice] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 

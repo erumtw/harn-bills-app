@@ -28,7 +28,7 @@ const SignIn = ({ navigation }) => {
     if (isLogged) {
       navigation.replace('(tabs)', { screen: 'home' });
     }
-  }, [isLogged, navigation]);
+  }, [isLogged]);
 
   const [submit, setSubmit] = useState(false);
   const [form, setForm] = useState({
