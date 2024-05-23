@@ -12,61 +12,68 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import icons from '../../constants/icons';
-import AddMember from '../../components/AddMember';
+import MemberAddList from '../../components/MemberAddList';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import AddDivider from '../../components/AddDivider';
 import ItemCard from '../../components/ItemCard';
 import { post_bill } from '../../api/constant/services';
+import ManualAddForm from '../../components/ManualAddForm';
+import AddFromContactModal from '../../components/AddFromContactModal';
+import AddItemsField from '../../components/AddItemsField';
+import ItemCreateCard from '../../components/ItemCreateCard';
 
 const Create = ({ navigation }) => {
   const { user } = useGlobalContext();
   const [itemVisible, setItemVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [isModalContact, setModalContact] = useState(false);
+  const [isManualAdd, setManualAdd] = useState(false);
 
   const [form, setForm] = useState({
     group_name: '',
     members: [user.username],
     member_name: '',
+    member_phone: '',
     items: [],
     item_title: '',
     item_price: 0,
     item_divider: [],
   });
 
-  console.log(form);
+  // console.log(form);
 
-  const addItem = () => {
-    if (
-      form.item_divider.length === 0 ||
-      form.item_price === '' ||
-      form.item_title === '' ||
-      form.item_price === 0 ||
-      isNaN(form.item_price)
-    ) {
-      return Alert.alert(
-        'Invalid Input!',
-        'item name, divider, price can not be empty, or price can not be 0 and must be number',
-      );
-    }
+  // const addItem = () => {
+  //   if (
+  //     form.item_divider.length === 0 ||
+  //     form.item_price === '' ||
+  //     form.item_title === '' ||
+  //     form.item_price === 0 ||
+  //     isNaN(form.item_price)
+  //   ) {
+  //     return Alert.alert(
+  //       'Invalid Input!',
+  //       'item name, divider, price can not be empty, or price can not be 0 and must be number',
+  //     );
+  //   }
 
-    const newItem = {
-      title: form.item_title,
-      price: parseFloat(form.item_price).toFixed(1),
-      divider: form.item_divider,
-    };
+  //   const newItem = {
+  //     title: form.item_title,
+  //     price: parseFloat(form.item_price).toFixed(1),
+  //     divider: form.item_divider,
+  //   };
 
-    let updated_items = form.items;
-    updated_items.push(newItem);
+  //   let updated_items = form.items;
+  //   updated_items.push(newItem);
 
-    // console.log('updatedItem', updated_items);
-    try {
-      setForm({ ...form, items: updated_items });
-    } catch (error) {
-    } finally {
-      setForm({ ...form, item_title: '', item_price: '', item_divider: [] });
-    }
-    // console.log('items: ', form.items);
-  };
+  //   // console.log('updatedItem', updated_items);
+  //   try {
+  //     setForm({ ...form, items: updated_items });
+  //   } catch (error) {
+  //   } finally {
+  //     setForm({ ...form, item_title: '', item_price: '', item_divider: [] });
+  //   }
+  //   // console.log('items: ', form.items);
+  // };
 
   const onSubmit = async () => {
     try {
@@ -95,6 +102,7 @@ const Create = ({ navigation }) => {
         group_name: '',
         members: [user.username],
         member_name: '',
+        member_phone: '',
         items: [],
         item_title: '',
         item_price: 0,
@@ -115,6 +123,7 @@ const Create = ({ navigation }) => {
               group_name: '',
               members: [user.username],
               member_name: '',
+              member_phone: '',
               items: [],
               item_title: '',
               item_price: '',
@@ -138,47 +147,49 @@ const Create = ({ navigation }) => {
         <Text className="text-base text-headline font-semibold mb-2 mt-5">
           Add Members
         </Text>
-        <View className="border-2 border-stroke rounded-lg p-2">
-          <View className="flex-row w-full items-center mb-2">
-            <FormField
-              otherStyles="flex-1"
-              placeholder="Enter Member Name"
-              value={form.member_name}
-              handleChange={(e) => setForm({ ...form, member_name: e })}
-            />
-            <CustomButton
-              containerStyles="h-[49px] ml-1"
-              icon={icons.plus_2}
-              handlePress={() => {
-                if (
-                  !form.members.find((member) => member === form.member_name) &&
-                  form.member_name !== ''
-                ) {
-                  try {
-                    const updated_member = form.members;
-                    updated_member.push(form.member_name);
-
-                    setForm({
-                      ...form,
-                      members: updated_member,
-                    });
-                  } catch (error) {
-                    console.log(error);
-                  } finally {
-                    setForm({ ...form, member_name: '' });
-                  }
-                }
-              }}
-            />
-            {console.log(form.members)}
+        <View className="flex-1 border-2 border-stroke rounded-lg p-2">
+          <View className="flex-row w-full justify-center mb-2">
+            <TouchableOpacity
+              onPress={() => setManualAdd(!isManualAdd)}
+              className="w-1/2"
+            >
+              <View className=" bg-secondary py-2 px-3 justify-center items-center rounded-lg mr-2">
+                <Text className="text-paragraph font-semibold">
+                  Add By Manual
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setModalContact(!isModalContact)}
+              className="w-1/2"
+            >
+              <View className="bg-secondary py-2 px-3 justify-center items-center rounded-lg">
+                <Text className="text-paragraph font-semibold">
+                  Add From Contacts
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
-
-          <AddMember form={form} setForm={setForm} />
+          <>{isManualAdd && <ManualAddForm setForm={setForm} form={form} />}</>
+          {isModalContact && (
+            <AddFromContactModal
+              setForm={setForm}
+              form={form}
+              modalVisible={isModalContact}
+              setModalVisible={setModalContact}
+            />
+          )}
+          <View className="w-full h-[1px] bg-gray-700 my-2 rounded-lg " />
+          <Text className="text-sm text-center text-paragraph mb-1 ">
+            members
+          </Text>
+          <MemberAddList form={form} setForm={setForm} />
+          {console.log('members:', form.members)}
         </View>
         <Text className="text-base text-headline font-semibold mb-2 mt-5">
           Add Items
         </Text>
-        <View className="border-2 border-stroke rounded-lg p-2">
+        {/* <View className="border-2 border-stroke rounded-lg p-2">
           <View className="flex-row mb-2">
             <View className="flex-[60%] flex-row mr-1 px-3 h-[50px] border-2 border-stroke rounded-lg items-center focus:border-secondary-100">
               <TextInput
@@ -219,12 +230,20 @@ const Create = ({ navigation }) => {
               {!itemVisible ? 'show items' : 'hide items'}
             </Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
+        <AddItemsField
+          setForm={setForm}
+          form={form}
+          itemVisible={itemVisible}
+          setItemVisible={setItemVisible}
+        />
         <View className="w-full h-[1px] bg-gray-700 my-2 rounded-lg" />
         {itemVisible ? (
           <FlatList
             data={form.items}
-            renderItem={({ item }) => <ItemCard item={item} />}
+            renderItem={({ item }) => (
+              <ItemCreateCard item={item} setForm={setForm} form={form} />
+            )}
             ListEmptyComponent={() => (
               <Text className="text-paragraph text-center">
                 add some items!

@@ -26,10 +26,6 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  if (!isLogged) {
-    navigation.replace('(auth)', { screen: 'sign-in' });
-  }
-
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -51,6 +47,10 @@ const Home = ({ navigation }) => {
   };
 
   useEffect(() => {
+    if (!isLogged) {
+      navigation.replace('(auth)', { screen: 'sign-in' });
+    }
+    
     fetchData();
   }, []);
 
@@ -64,7 +64,7 @@ const Home = ({ navigation }) => {
     <SafeAreaView className="h-full">
       <View className="flex w-full p-5">
         {isLoading ? (
-          <ActivityIndicator />
+          <ActivityIndicator style={{ flex: 1 }} />
         ) : (
           <FlatList
             data={billData}
@@ -121,7 +121,7 @@ const Home = ({ navigation }) => {
                 <TouchableOpacity
                   onPress={() => navigation.navigate('profile')}
                 >
-                  <Text className="text-paragraph font-semibold">
+                  <Text className="text-paragraph font-semibold underline">
                     see all bills
                   </Text>
                 </TouchableOpacity>

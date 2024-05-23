@@ -19,25 +19,26 @@ import {
   get_user_total_paid,
 } from '../../api/constant/services';
 import CustomButton from '../../components/CustomButton';
+import { getUserBills, getUserTotalOutcome } from '../../firebase/services';
 
 const Profile = ({ navigation }) => {
   const { user, setUser, setIsLogged } = useGlobalContext();
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(true);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalOutcome, setTotalOutcome] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     try {
       setLoading(true);
 
-      const bills = await get_user_all_bills(user.username);
-      // console.log('user bills', bills);
-
-      const total_price = await get_user_total_paid(user.username);
+      const bills = await getUserBills(user);
+      // const total_outcome = await getUserTotalOutcome(user);
 
       setData(bills);
-      setTotalPrice(total_price);
+      // setTotalOutcome(total_outcome);
+      console.log('user bills', data);
+      console.log(totalOutcome);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -54,8 +55,6 @@ const Profile = ({ navigation }) => {
     await fetchData();
     setRefreshing(false);
   };
-
-  // console.log('user bills ', data);
 
   const sign_out = async () => {
     try {
@@ -75,12 +74,12 @@ const Profile = ({ navigation }) => {
   return (
     <SafeAreaView>
       {isLoading ? (
-        <ActivityIndicator />
+        <ActivityIndicator style={{ flex: 1 }} />
       ) : (
         <FlatList
           contentContainerStyle={{ padding: 20 }}
           data={data}
-          keyExtractor={(item) => item.id}
+          // keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -127,7 +126,7 @@ const Profile = ({ navigation }) => {
                   subtitle={data.length}
                   otherStyles="mr-5"
                 />
-                <ProfileInfo title="Total Paid" subtitle={`$${totalPrice}`} />
+                <ProfileInfo title="Total Paid" subtitle={`$${totalOutcome}`} />
               </View>
 
               <View className="w-full h-[1px] bg-headline my-5 rounded-lg" />

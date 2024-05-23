@@ -6,7 +6,7 @@ import {
   get_total_bill_price,
   get_user_divided_price,
 } from '../api/constant/services';
-import { getBillTotalPrice, getUserDividedPrice } from '../firebase/services';
+import { getBillTotalPrice, getUserBillDividedPrice } from '../firebase/services';
 
 const BillCard = ({ bill }) => {
   const navigation = useNavigation();
@@ -17,7 +17,7 @@ const BillCard = ({ bill }) => {
   const fetchData = async () => {
     try {
       // console.log('fetching price of billId:', bill.id);
-      const divided_price = await getUserDividedPrice(user.phone, bill.id);
+      const divided_price = await getUserBillDividedPrice(user.phone, bill.id);
       const total_bill_price = await getBillTotalPrice(bill.id);
 
       setDividedPrice(divided_price);

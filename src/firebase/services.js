@@ -88,7 +88,18 @@ export const getUserBills = async (user) => {
   try {
     const billQuery = db
       .collection('bills')
-      .where('members', 'array-contains-any', [{ memberPhone: user.phone }]);
+      .where('members', 'array-contains-any', [
+        {
+          memberPhone: user.phone,
+          membername: user.username,
+          isPaid: false,
+        },
+        {
+          memberPhone: user.phone,
+          membername: user.username,
+          isPaid: true,
+        },
+      ]);
 
     const querySnapshot = await billQuery.get();
 
@@ -130,7 +141,7 @@ export const getUserUnpaidBill = async (user) => {
   } catch (error) {}
 };
 
-export const getUserDividedPrice = async (userPhone, billId) => {
+export const getUserBillDividedPrice = async (userPhone, billId) => {
   try {
     let sum = 0;
     const billItemsQuery = await db
@@ -166,6 +177,53 @@ export const getBillTotalPrice = async (billId) => {
     });
 
     return parseFloat(sum).toFixed(1);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const getBillItems = async (billId) => {
+  try {
+    const itemQuery = await db
+      .collection('items')
+      .where('bill_id', '==', billId)
+      .get();
+
+    const itemsData = [];
+    itemQuery.forEach((doc) => {
+      const itemSnapshot = doc.data();
+      itemsData.push(itemSnapshot);
+    });
+
+    return itemsData;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const getUserTotalOutcome = async (user) => {
+  try {
+    let totalOutcome = 0;
+
+    const allUserBill = await getUserBills(user);
+
+    allUserBill.forEach(async (bill) => {
+      let dividedBillPrice = await getUserBillDividedPrice(user.phone, bill.id);
+
+      totalOutcome += dividedBillPrice;
+    });
+
+    return totalOutcome;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const getBill = async (billId) => {
+  try {
+    const billSnapshot = await db.collection('bills').doc(billId).get();
+    if (billSnapshot.exists) return billSnapshot.data();
+    else console.log('have no bill');
   } catch (error) {
     console.log(error.message);
   }
