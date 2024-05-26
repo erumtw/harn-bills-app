@@ -4,32 +4,37 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../../contexts/GlobalContext';
-import {
-  get_user_divided_price,
-  set_bill_paid_status,
-} from '../../api/constant/services';
 import ItemCard from '../../components/ItemCard';
 import CustomButton from '../../components/CustomButton';
 import { Screen } from 'react-native-screens';
-import { getBillItems, getUserBillDividedPrice } from '../../firebase/services';
+import {
+  checkAndUpdateBillStatus,
+  getBillItems,
+  getUserBillDividedPrice,
+  updateBillStatus,
+  updateMemberPaidStatus,
+} from '../../firebase/services';
+import icons from '../../constants/icons';
 
-const Group = ({ route, navigation }) => {
+const Bill = ({ route, navigation }) => {
   const { user } = useGlobalContext();
   let { bill } = route.params;
   const [itemVisible, setItemVisible] = useState(false);
-  const [isPaid, setIsPaid] = useState(bill.set_bill_paid_status);
+  const [isPaid, setIsPaid] = useState(bill.status);
   const [items, setItems] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [billState, setBill] = useState(bill);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const items = await getBillItems(bill.id);
+        const items = await getBillItems(billState.id);
         setItems(items);
         console.log('items: ', items);
       } catch (error) {
@@ -41,31 +46,69 @@ const Group = ({ route, navigation }) => {
     };
 
     fetchData();
-  }, [navigation]);
+  }, []);
 
-  const renderMember = async ({ item }) => {
-    // console.log(item);
+  const onChangeIsPaid = async (member) => {
+    try {
+      setLoading(true);
+      const updatedBill = await updateMemberPaidStatus(
+        billState.id,
+        member.memberPhone,
+        true,
+      );
+      // console.log(updatedBill);
 
+      const isBillClear = await checkAndUpdateBillStatus(billState.id);
+      if (isBillClear) {
+        setIsPaid(true);
+        updatedBill.status = true;
+      }
+
+      setBill(updatedBill);
+      bill = billState
+      console.log('updatedBill: ', updatedBill);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderMember = async ({ item: member }) => {
     const user_divided_price = await getUserBillDividedPrice(
-      item.memberPhone,
-      bill.id,
+      member.memberPhone,
+      billState.id,
     );
 
     return (
       <View
-        className={`px-3 py-1 mb-2 border-2  ${
-          item.membername === user.username
+        className={`flex-row w-1/2 px-3 py-1 mb-2 border-2  ${
+          member.membername === user.username
             ? 'border-secondary'
             : 'border-gray-700'
-        } rounded-lg justify-center items-center mr-2`}
+        } rounded-lg justify-between  items-center mr-2`}
       >
-        <Text className="font-medium text-lg text-secondary">
-          {item.membername === user.username ? 'You' : item.membername}{' '}
-          <Text className="font-bold">${user_divided_price}</Text>
-        </Text>
-        <Text className="font-medium text-xs text-secondary">
-          {item.isPaid ? 'Paid' : 'Unpaid'}
-        </Text>
+        <View>
+          <View className="mr-2">
+            <Text className="font-medium text-lg text-secondary">
+              {member.membername === user.username ? 'You' : member.membername}{' '}
+              <Text className="font-bold">${user_divided_price}</Text>
+            </Text>
+            <Text className="font-medium text-xs text-secondary">
+              {member.isPaid ? 'Paid' : 'Unpaid'}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={() => onChangeIsPaid(member)}
+          disabled={member.isPaid}
+        >
+          <Image
+            source={icons.check_mark}
+            className="w-6 h-6"
+            tintColor={`${member.isPaid ? '#ff8e3c' : 'gray'}`}
+          />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -81,33 +124,34 @@ const Group = ({ route, navigation }) => {
         </TouchableOpacity>
         <Text className="font-bold text-2xl text-headline my-3">Bill Name</Text>
         <Text className="font-bold text-2xl text-secondary">
-          {bill.bill_name}
+          {billState.bill_name}
         </Text>
         <Text className="font-bold text-2xl text-headline mt-3">Status</Text>
         <View className="flex-row items-center">
           <Text className="font-bold text-xl text-secondary">
-            {isPaid ? 'Cleared' : 'Unpaid'}
+            {isPaid ? 'Cleared' : 'Unclear'}
           </Text>
-          <CustomButton
+          {/* <CustomButton
             title="Clear Bill"
             isSubmit={isPaid}
             containerStyles="items-center justify-center ml-2 h-[40px]"
             handlePress={async () => {
-              // setIsPaid(true);
-              // const updatedBill = await set_bill_paid_status(bill.id, true);
-              // bill = updatedBill;
+              const updatedBill = await updateBillStatus(bill.id, true);
+              setIsPaid(true);
+              bill = updatedBill;
               console.log('updated bill', bill);
             }}
-          />
+          /> */}
         </View>
         <Text className="font-bold text-2xl text-headline my-3">Divider</Text>
         <View className="w-full">
+          {console.log(billState.members)}
           <FlatList
             numColumns={2}
-            data={bill.members}
+            data={billState.members}
             renderItem={renderMember}
             // keyExtractor={(item) => item}
-            showsHorizontalScrollIndicator={false}
+            // showsHorizontalScrollIndicator={false}
           />
         </View>
         <Text className="font-bold text-2xl text-headline mt-3 mb-1">
@@ -127,7 +171,9 @@ const Group = ({ route, navigation }) => {
             <FlatList
               // numColumns={2}
               data={items}
-              renderItem={({ item }) => <ItemCard item={item} bill={bill}/>}
+              renderItem={({ item }) => (
+                <ItemCard item={item} bill={billState} />
+              )}
               // keyExtractor={(item) => `${item.title}-${item.price}`}
             />
           ) : (
@@ -153,4 +199,4 @@ const Group = ({ route, navigation }) => {
   );
 };
 
-export default Group;
+export default Bill;

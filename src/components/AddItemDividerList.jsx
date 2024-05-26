@@ -3,7 +3,7 @@ import React from 'react';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import icons from '../constants/icons';
 
-const AddDivider = ({ form, setForm }) => {
+const AddItemDividerList = ({ form, setForm }) => {
   const { user } = useGlobalContext();
   // console.log('yo!', form.members);
   console.log('divider: ', form.item_divider);
@@ -39,11 +39,11 @@ const AddDivider = ({ form, setForm }) => {
           <Text className="font-sm text-base text-gray-700 font-bold">ALL</Text>
         </TouchableOpacity>
       )}
-      renderItem={({item}) => (
+      renderItem={({ item: member }) => (
         <TouchableOpacity
-          onPress={() => haldlePress(item)}
+          onPress={() => haldlePress(member)}
           className={`px-2 py-1 mb-2 border-2 rounded-lg  mr-2 ${
-            form.item_divider.find((i) => i === item)
+            form.item_divider.find((i) => i === member)
               ? 'border-secondary'
               : 'border-gray-700'
           }`}
@@ -51,20 +51,22 @@ const AddDivider = ({ form, setForm }) => {
           <View className="flex-row justify-center items-center">
             <Text
               className={`font-sm text-base mr-2 ${
-                form.item_divider.find((i) => i === item)
+                form.item_divider.find((i) => i === member)
                   ? 'text-secondary'
                   : 'text-gray-700'
               }`}
             >
-              {item === user.username
+              {member.membername === user.username
                 ? 'You'
-                : `${item[0].toUpperCase()}${item.slice(1)}`}
+                : `${member.membername[0].toUpperCase()}${member.membername.slice(
+                    1,
+                  )}`}
             </Text>
             <Image
               source={icons.plus}
               className="w-4 h-4"
               tintColor={`${
-                form.item_divider.find((i) => i === item)
+                form.item_divider.find((i) => i === member)
                   ? '#FF9C01'
                   : '#6b7280'
               }`}
@@ -76,4 +78,4 @@ const AddDivider = ({ form, setForm }) => {
   );
 };
 
-export default AddDivider;
+export default AddItemDividerList;

@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
@@ -18,6 +18,7 @@ import { useGlobalContext } from '../../contexts/GlobalContext';
 import { Logo } from '../../components/Logo';
 import firestore from '@react-native-firebase/firestore';
 import { getUserId, getUserUnpaidBill } from '../../firebase/services';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
   const { user, isLogged } = useGlobalContext();
@@ -34,11 +35,7 @@ const Home = ({ navigation }) => {
       const bills = await getUserUnpaidBill(user);
       console.log('unpaid bills of', user.id, ' : ', bills);
 
-      if (bills.length > 0) {
-        setBillData(bills);
-      } else {
-        console.log('No unpaid bills found for user', user.phone);
-      }
+      setBillData(bills);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -46,13 +43,15 @@ const Home = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (!isLogged) {
-      navigation.replace('(auth)', { screen: 'sign-in' });
-    }
-    
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (!isLogged) {
+        navigation.replace('(auth)', { screen: 'sign-in' });
+      }
+
+      fetchData();
+    }, [isLogged]),
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -68,12 +67,8 @@ const Home = ({ navigation }) => {
         ) : (
           <FlatList
             data={billData}
-            // keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <>
-                <BillCard bill={item} />
-              </>
-            )}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item: bill }) => <BillCard bill={bill} />}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

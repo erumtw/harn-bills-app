@@ -1,6 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
-import AddDivider from './AddDivider';
+import AddItemDividerList from './AddItemDividerList';
 import CustomButton from './CustomButton';
 
 const AddItemsField = ({ form, setForm, setItemVisible, itemVisible }) => {
@@ -35,8 +35,9 @@ const AddItemsField = ({ form, setForm, setItemVisible, itemVisible }) => {
       setForm({ ...form, item_title: '', item_price: '', item_divider: [] });
     }
     // console.log('items: ', form.items);
+    {console.log("item_divider", form.item_divider)}
+    
   };
-
 
   return (
     <View className="border-2 border-stroke rounded-lg p-2">
@@ -63,7 +64,7 @@ const AddItemsField = ({ form, setForm, setItemVisible, itemVisible }) => {
         </View>
       </View>
 
-      <AddDivider form={form} setForm={setForm} />
+      <AddItemDividerList form={form} setForm={setForm} />
 
       <CustomButton
         title="Add Item"

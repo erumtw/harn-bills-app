@@ -38,6 +38,7 @@ const TabLayout = () => {
       <Tabs.Navigator
         sceneContainerStyle={{ backgroundColor: '#fef6e4' }}
         screenOptions={{
+          tabBarHideOnKeyboard: true,
           tabBarShowLabel: false,
           tabBarActiveTintColor: '#ff8e3c',
           tabBarInactiveTintColor: '#2a2a2a',

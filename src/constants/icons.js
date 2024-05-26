@@ -7,6 +7,8 @@ import trash_bin from '../assets/icons/trash-bin.png';
 import log_out from '../assets/icons/log-out.png';
 import contact from '../assets/icons/contact.png';
 import add_user from '../assets/icons/add_user.png';
+import check_mark from '../assets/icons/check_mark.png';
+
 
 export default {
   home,
@@ -17,5 +19,6 @@ export default {
   trash_bin,
   log_out,
   contact,
-  add_user
+  add_user,
+  check_mark
 };

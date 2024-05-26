@@ -25,27 +25,16 @@ const MemberAddList = ({ form, setForm }) => {
       <FlatList
         horizontal
         data={form.members}
-        keyExtractor={(item) => item}
-        // ListHeaderComponent={() => (
-        //   <TouchableOpacity
-        //     onPress={()=>{}}
-        //     className="px-3 py-1 mb-2 border-2 border-gray-700 rounded-lg justify-center items-center mr-2 "
-        //   >
-        //     <View className="flex-row">
-        //     <Text className="font-sm text-base text-button font-bold">Add From Contacts</Text>
-        //     <Image source={icons.add_user} className="w-6 h-6" tintColor="#ff8e3c"/>
-        //     </View>
-        //   </TouchableOpacity>
-        // )}
+        // keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <View className="px-3 py-1 mb-2 border-2 border-gray-700 rounded-lg justify-center items-center mr-2 flex-row">
             {/* {console.log("item", item)} */}
             <Text className="font-sm text-base text-button font-bold">
-              {item === user.username
+              {item.membername === user.username
                 ? 'You'
-                : `${item[0].toUpperCase()}${item.slice(1)}`}
+                : `${item.membername[0].toUpperCase()}${item.membername.slice(1)}`}
             </Text>
-            {item !== user.username ? (
+            {item.membername !== user.username ? (
               <TouchableOpacity
                 onPress={() => {
                   handleDelete(item);

@@ -7,7 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,10 +19,11 @@ import {
   get_user_total_paid,
 } from '../../api/constant/services';
 import CustomButton from '../../components/CustomButton';
-import { getUserBills, getUserTotalOutcome } from '../../firebase/services';
+import { getUserBills, getUserTotalOutcome, getUserTotalPaid } from '../../firebase/services';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({ navigation }) => {
-  const { user, setUser, setIsLogged } = useGlobalContext();
+  const { user, setUser, isLogged, setIsLogged } = useGlobalContext();
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [totalOutcome, setTotalOutcome] = useState(0);
@@ -33,10 +34,10 @@ const Profile = ({ navigation }) => {
       setLoading(true);
 
       const bills = await getUserBills(user);
-      // const total_outcome = await getUserTotalOutcome(user);
+      const total_outcome = await getUserTotalOutcome(user);
 
       setData(bills);
-      // setTotalOutcome(total_outcome);
+      setTotalOutcome(total_outcome);
       console.log('user bills', data);
       console.log(totalOutcome);
     } catch (error) {
@@ -46,9 +47,15 @@ const Profile = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (!isLogged) {
+        navigation.replace('(auth)', { screen: 'sign-in' });
+      }
+
+      fetchData();
+    }, [isLogged]),
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

@@ -5,6 +5,30 @@ import icons from '../constants/icons';
 import CustomButton from './CustomButton';
 
 const ManualAddForm = ({ form, setForm }) => {
+  const onAddMember = () => {
+    if (
+      !form.members.find((member) => member.membername === form.member_name) &&
+      form.member_name !== ''
+    ) {
+      try {
+        const updated_member = form.members;
+        updated_member.push({
+          membername: form.member_name,
+          memberPhone: form.member_phone,
+        });
+
+        setForm({
+          ...form,
+          members: updated_member,
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setForm({ ...form, member_name: '', member_phone: '' });
+      }
+    }
+  };
+
   return (
     <View>
       <FormField
@@ -23,26 +47,7 @@ const ManualAddForm = ({ form, setForm }) => {
         <CustomButton
           containerStyles="h-[49px] ml-1"
           icon={icons.plus_2}
-          handlePress={() => {
-            if (
-              !form.members.find((member) => member === form.member_name) &&
-              form.member_name !== ''
-            ) {
-              try {
-                const updated_member = form.members;
-                updated_member.push(form.member_name);
-
-                setForm({
-                  ...form,
-                  members: updated_member,
-                });
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setForm({ ...form, member_name: '' });
-              }
-            }
-          }}
+          handlePress={onAddMember}
         />
         {/* {console.log(form.members)} */}
       </View>
