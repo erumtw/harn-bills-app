@@ -16,14 +16,14 @@ const FormField = ({
   return (
     <View className={`${otherStyles}`}>
       {title ? (
-        <Text className="text-base text-headline font-semibold mb-2">
+        <Text className="text-lg text-headline font-semibold mb-2">
           {title}
         </Text>
       ) : (
         <></>
       )}
 
-      <View className="flex-row px-5 h-[50px] w-full border-2 border-stroke rounded-lg items-center focus:border-highlight">
+      <View className="flex-row px-5 h-[50px] w-full border-2 border-stroke rounded-lg items-center focus:border-highlight bg-primary">
         <TextInput
           className="flex-1 text-paragraph text-sm font-medium"
           value={value}

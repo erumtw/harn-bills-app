@@ -11,7 +11,7 @@ const AddItemDividerList = ({ form, setForm }) => {
   let divider_list = form.item_divider;
   // console.log('divider_list: ', divider_list);
 
-  const haldlePress = (member) => {
+  const handlePress = (member) => {
     if (divider_list.find((e) => e == member)) {
       // delete member
       divider_list = divider_list.filter((e) => e !== member);
@@ -41,7 +41,7 @@ const AddItemDividerList = ({ form, setForm }) => {
       )}
       renderItem={({ item: member }) => (
         <TouchableOpacity
-          onPress={() => haldlePress(member)}
+          onPress={() => handlePress(member)}
           className={`px-2 py-1 mb-2 border-2 rounded-lg  mr-2 ${
             form.item_divider.find((i) => i === member)
               ? 'border-secondary'

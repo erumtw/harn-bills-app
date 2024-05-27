@@ -11,12 +11,12 @@ const Tabs = createBottomTabNavigator();
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
-    <View className="flex items-center justify-center gap-2">
+    <View className="flex items-center justify-center gap-1">
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className="w-7 h-7"
+        className="w-9 h-9"
       />
       <Text
         className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}

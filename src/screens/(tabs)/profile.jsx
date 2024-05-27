@@ -19,7 +19,11 @@ import {
   get_user_total_paid,
 } from '../../api/constant/services';
 import CustomButton from '../../components/CustomButton';
-import { getUserBills, getUserTotalOutcome, getUserTotalPaid } from '../../firebase/services';
+import {
+  getUserBills,
+  getUserTotalOutcome,
+  getUserTotalPaid,
+} from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({ navigation }) => {

@@ -17,7 +17,7 @@ const BillCard = ({ bill }) => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       // console.log('fetching price of billId:', bill.id);
       const divided_price = await getUserBillDividedPrice(user.phone, bill.id);
       const total_bill_price = await getBillTotalPrice(bill.id);

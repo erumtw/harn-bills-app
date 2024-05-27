@@ -5,6 +5,16 @@ import { Alert } from 'react-native';
 
 const db = firebase.firestore();
 
+export const getCurrentUser = async () => {
+  try {
+    const currentUser = await AsyncStorage.getItem('user');
+    console.log('Current User:', currentUser);
+    return JSON.parse(currentUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getUserId = async (phone) => {
   const userSnapshot = await db
     .collection('users')
@@ -363,8 +373,28 @@ export const getUserTotalOutcome = async (user) => {
       totalOutcome += parseFloat(dividedPrice);
     }
 
-    return totalOutcome.toFixed(2);
+    return totalOutcome.toFixed(1);
   } catch (error) {
     console.error('Error calculating total paid:', error);
+  }
+};
+
+export const updateContact = async (user, form) => {
+  try {
+    const newContact = { img: '', name: form.name, phone: form.phone };
+    const updateData = [...user.contacts, newContact];
+
+    const userDocRef = db.collection('users').doc(user.id);
+
+    await userDocRef.update({ contacts: updateData })
+    console.log('user updated!');
+
+    const updatedUserData = await userDocRef.get();
+    const userData = updatedUserData.data();
+    userData.id = updatedUserData.id;
+    console.log(userData);
+    return userData;
+  } catch (error) {
+    console.log(error.message);
   }
 };

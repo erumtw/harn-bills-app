@@ -21,10 +21,10 @@ module.exports = {
         paragraph: '#2a2a2a',
         button: '#ff8e3c',
         button_text: '#0d0d0d',
-        stroke: '#0d0d0d',
+        stroke: '#4b5563',
         highlight: '#ff8e3c',
         third: '#fffffe',
-        tertiary: '#d9376e'
+        tertiary: '#d9376e',
       },
       fontFamily: {
         pthin: ['Poppins-Thin', 'sans-serif'],

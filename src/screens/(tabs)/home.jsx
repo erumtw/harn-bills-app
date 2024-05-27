@@ -1,8 +1,6 @@
 import {
   View,
   Text,
-  Image,
-  ScrollView,
   FlatList,
   RefreshControl,
   ActivityIndicator,
@@ -12,12 +10,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
-import { get_user_unpaid_bills } from '../../api/constant/services';
 import BillCard from '../../components/BillCard';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import { Logo } from '../../components/Logo';
-import firestore from '@react-native-firebase/firestore';
-import { getUserId, getUserUnpaidBill } from '../../firebase/services';
+import { getUserUnpaidBill } from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
@@ -61,7 +57,7 @@ const Home = ({ navigation }) => {
 
   return (
     <SafeAreaView className="h-full">
-      <View className="flex w-full p-5">
+      <View className="flex w-full mt-3 px-5">
         {isLoading ? (
           <ActivityIndicator style={{ flex: 1 }} />
         ) : (

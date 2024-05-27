@@ -17,6 +17,7 @@ import AddFromContactModal from '../../components/AddFromContactModal';
 import AddItemsField from '../../components/AddItemsField';
 import ItemCreateCard from '../../components/ItemCreateCard';
 import { postBill } from '../../firebase/services';
+import { MultipleSelectList } from 'react-native-dropdown-select-list';
 
 const Create = ({ navigation }) => {
   const { user } = useGlobalContext();
@@ -91,7 +92,7 @@ const Create = ({ navigation }) => {
             value={form.bill_name}
           />
         </View>
-        <Text className="text-base text-headline font-semibold mb-2 mt-5">
+        <Text className="text-lg text-headline font-semibold mb-2 mt-5">
           Add Members
         </Text>
         <View className="flex-1 border-2 border-stroke rounded-lg p-2">
@@ -114,6 +115,7 @@ const Create = ({ navigation }) => {
                 <Text className="text-paragraph font-semibold">
                   Add From Contacts
                 </Text>
+                {/* <MultipleSelectList /> */}
               </View>
             </TouchableOpacity>
           </View>
@@ -134,7 +136,7 @@ const Create = ({ navigation }) => {
         </Text>
         <MemberAddList form={form} setForm={setForm} />
         {/* Add Items Sections */}
-        <Text className="text-base text-headline font-semibold mb-2 mt-5">
+        <Text className="text-lg text-headline font-semibold mb-2 mt-5">
           Add Items
         </Text>
         <AddItemsField

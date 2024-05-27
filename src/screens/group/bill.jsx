@@ -10,8 +10,6 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import ItemCard from '../../components/ItemCard';
-import CustomButton from '../../components/CustomButton';
-import { Screen } from 'react-native-screens';
 import {
   checkAndUpdateBillStatus,
   getBillItems,
