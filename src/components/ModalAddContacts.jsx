@@ -2,7 +2,7 @@ import { View, Text, Modal, TouchableOpacity, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useGlobalContext } from '../contexts/GlobalContext.js';
 import FormField from './FormField.jsx';
-import { updateContact } from '../firebase/services.js';
+import { postContactData } from '../firebase/services.js';
 
 const ModalAddContacts = ({
   modalAddContact,
@@ -11,11 +11,10 @@ const ModalAddContacts = ({
 }) => {
   const { user, setUser } = useGlobalContext();
   const [form, setForm] = useState({
+    img: '',
     name: '',
     phone: '',
   });
-
-
 
   const onSubmit = async () => {
     try {
@@ -34,22 +33,26 @@ const ModalAddContacts = ({
         );
         return;
       }
-      const updatedUser = await updateContact(user, form);
-      console.log(updatedUser);
+
+      const updatedUser = await postContactData(user, form);
+      console.log("updatedUser: ", updatedUser);
+
       setUser(updatedUser);
       setContactData(updatedUser.contacts);
-      setModalAddContact(false);
+      closeModal()
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  const closeModal = () =>  setModalAddContact(false)
 
   return (
     <Modal
       animationType="slide"
       transparent={true}
       visible={modalAddContact}
-      onRequestClose={() => setModalAddContact(false)}
+      onRequestClose={closeModal}
     >
       <View className="flex-1 justify-end items-center ">
         <View className="h-[350px]  w-full justify-start items-center rounded-t-2xl  bg-secondary p-10">
@@ -73,7 +76,7 @@ const ModalAddContacts = ({
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setModalAddContact(false)}>
+          <TouchableOpacity onPress={closeModal}>
             <Text className="text-sm text-stroke">Close</Text>
           </TouchableOpacity>
         </View>

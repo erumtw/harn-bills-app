@@ -63,7 +63,7 @@ const Bill = ({ route, navigation }) => {
       }
 
       setBill(updatedBill);
-      bill = billState
+      bill = billState;
       console.log('updatedBill: ', updatedBill);
     } catch (error) {
       console.log(error.message);
@@ -81,18 +81,24 @@ const Bill = ({ route, navigation }) => {
     return (
       <View
         className={`flex-row w-1/2 px-3 py-1 mb-2 border-2  ${
-          member.membername === user.username
-            ? 'border-secondary'
-            : 'border-gray-700'
+          member.isPaid ? 'border-secondary' : 'border-gray-700'
         } rounded-lg justify-between  items-center mr-2`}
       >
         <View>
           <View className="mr-2">
-            <Text className="font-medium text-lg text-secondary">
+            <Text
+              className={`font-medium text-lg ${
+                member.isPaid ? 'text-secondary' : 'text-stroke'
+              }`}
+            >
               {member.membername === user.username ? 'You' : member.membername}{' '}
               <Text className="font-bold">${user_divided_price}</Text>
             </Text>
-            <Text className="font-medium text-xs text-secondary">
+            <Text
+              className={`font-medium text-xs ${
+                member.isPaid ? 'text-secondary' : 'text-stroke'
+              }`}
+            >
               {member.isPaid ? 'Paid' : 'Unpaid'}
             </Text>
           </View>
@@ -100,12 +106,17 @@ const Bill = ({ route, navigation }) => {
         <TouchableOpacity
           onPress={() => onChangeIsPaid(member)}
           disabled={member.isPaid}
+          className="w-6 h-6"
         >
-          <Image
-            source={icons.check_mark}
-            className="w-6 h-6"
-            tintColor={`${member.isPaid ? '#ff8e3c' : 'gray'}`}
-          />
+          {member.isPaid ? (
+            <Image
+              source={icons.check_mark}
+              className="w-full h-full"
+              tintColor={`${member.isPaid ? '#ff8e3c' : 'gray'}`}
+            />
+          ) : (
+            <View className="h-full w-full border-2 border-stroke rounded-full" />
+          )}
         </TouchableOpacity>
       </View>
     );

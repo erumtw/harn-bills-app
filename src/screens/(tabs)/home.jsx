@@ -56,7 +56,7 @@ const Home = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="h-full">
+    <SafeAreaView>
       <View className="flex w-full mt-3 px-5">
         {isLoading ? (
           <ActivityIndicator style={{ flex: 1 }} />

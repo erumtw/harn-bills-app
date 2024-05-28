@@ -379,21 +379,71 @@ export const getUserTotalOutcome = async (user) => {
   }
 };
 
-export const updateContact = async (user, form) => {
+export const postContactData = async (user, form, contact) => {
   try {
-    const newContact = { img: '', name: form.name, phone: form.phone };
-    const updateData = [...user.contacts, newContact];
+    const newContact = {
+      img: '' || form.img,
+      name: form.name,
+      phone: form.phone,
+    };
 
     const userDocRef = db.collection('users').doc(user.id);
 
-    await userDocRef.update({ contacts: updateData })
+    let updateData;
+    if (!contact) {
+      updateData = [...user.contacts, newContact];
+    } else {
+      const userSnapshot = await userDocRef.get();
+      const userData = userSnapshot.data();
+      // console.log(userData);
+      const updateContact = userData.contacts.map((snapshotContact) => {
+        if (
+          snapshotContact.phone === contact.phone &&
+          snapshotContact.name === contact.name
+        ) {
+          return newContact;
+        }
+
+        return snapshotContact;
+      });
+
+      updateData = updateContact;
+      console.log(updateData);
+    }
+
+    await userDocRef.update({ contacts: updateData });
     console.log('user updated!');
 
-    const updatedUserData = await userDocRef.get();
-    const userData = updatedUserData.data();
-    userData.id = updatedUserData.id;
-    console.log(userData);
+    const updatedUserSnapshot = await userDocRef.get();
+    const userData = updatedUserSnapshot.data();
+    userData.id = updatedUserSnapshot.id;
+    // console.log('userData:', userData);
+    // console.log('userData contacts: ', userData.contacts);
     return userData;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const deleteContact = async (user, contact) => {
+  try {
+    const userDocRef = db.collection('users').doc(user.id);
+    const userData = (await userDocRef.get()).data();
+
+    const updatedContacts = userData.contacts.filter(
+      (c) => c.phone !== contact.phone && c.name !== contact.name,
+    );
+
+    await userDocRef.update({ contacts: updatedContacts });
+
+    const updatedUserData = await userDocRef.get();
+    const updatedUserInfo = {
+      ...user,
+      contacts: updatedUserData.data().contacts,
+    };
+
+    console.log('Contact deleted successfully!');
+    return updatedUserInfo;
   } catch (error) {
     console.log(error.message);
   }

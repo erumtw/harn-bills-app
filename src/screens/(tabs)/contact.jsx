@@ -29,8 +29,9 @@ const Contact = ({ navigation }) => {
 
       // const user.id = await getUserId(user.phone);
       const userData = await getUserData(user.id);
-      console.log("refreshing:", userData);
+      console.log('refreshing:', userData);
       setUser(userData);
+      setContactData(userData.contacts);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -73,9 +74,17 @@ const Contact = ({ navigation }) => {
           <View className="flex-1 px-5 bg-primary">
             <FlatList
               data={contactData}
+              ListEmptyComponent={() => (
+                <Text className="text-lg text-stroke text-center">
+                  add your first contact!
+                </Text>
+              )}
               ListHeaderComponent={Header}
               renderItem={({ item: contact }) => (
-                <ContactCard contact={contact} />
+                <ContactCard
+                  contact={contact}
+                  setContactData={setContactData}
+                />
               )}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
