@@ -13,21 +13,21 @@ const ContactCard = ({ contact, setContactData }) => {
           setModalVisible(true);
         }}
       >
-        <View className="flex-row justify-start items-center mb-1 rounded-lg py-1 border-2 border-secondary ">
-          <View className="w-12 h-12 ml-3 bg-black-200 rounded-full">
+        <View className="flex-row justify-start items-center mb-1 rounded-lg py-2 border-2 border-secondary ">
+          <View className="w-12 h-12 ml-3 bg-black-200 rounded-full border-2 border-secondary">
             <Image
-              source={contact.img || icons.profile}
-              className="w-full h-full"
-              resizeMode="contain"
-              tintColor={!contact.img ? '#ff8e3c' : ''}
+              source={contact.img !== '' ? { uri: contact.img } : icons.profile}
+              className="w-full h-full rounded-full"
+              resizeMode="cover"
+              tintColor={contact.img !== '' ? '' : '#ff8e3c'}
             />
           </View>
-          <View className="ml-3">
-            <Text className="font-bold text-xl text-gray-700">
+          <View className="ml-3 items-start justify-between">
+            <Text className="font-bold text-xl text-secondary">
               {contact.name}
             </Text>
-            <Text className="font-bold text-sm text-gray-500">
-              {contact.phone}
+            <Text className="font-semibold text-sm text-stroke">
+              {contact.phone.slice(0, 3)}-{contact.phone.slice(3)}
             </Text>
           </View>
         </View>

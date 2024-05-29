@@ -48,7 +48,7 @@ const Contact = ({ navigation }) => {
   const Header = () => {
     return (
       <>
-        <View className="h-[100px] mb-12">
+        <View className="h-[100px] my-12">
           <Text className="text-gray-700 text-3xl font-bold">Contacts</Text>
           <View className="mt-2">
             <CustomButton

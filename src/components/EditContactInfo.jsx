@@ -10,7 +10,13 @@ import React, { useState } from 'react';
 import FormField from './FormField.jsx';
 import icons from '../constants/icons';
 import { useGlobalContext } from '../contexts/GlobalContext.js';
-import { deleteContact, postContactData } from '../firebase/services.js';
+import {
+  deleteContact,
+  postContactData,
+  uploadImage,
+} from '../firebase/services.js';
+import { launchImageLibrary } from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 
 export const EditContactInfo = ({
   contact,
@@ -58,6 +64,8 @@ export const EditContactInfo = ({
         return;
       }
 
+
+
       const updateUserData = await postContactData(user, contactForm, contact);
       // console.log('updateUserData:', updateUserData);
       setUser(updateUserData);
@@ -68,7 +76,34 @@ export const EditContactInfo = ({
     }
   };
 
-  const onImageEdit = () => {};
+  const onImageEdit = async () => {
+    try {
+      const options = {
+        title: 'Select Image',
+        mediaType: 'photo',
+        storageOptions: {
+          skipBackup: true, // do not backup to iCloud
+          path: 'images', // store camera images under Pictures/images for android and Documents/images for iOS
+        },
+      };
+
+      await launchImageLibrary(options, (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+        } else {
+          const source = response.assets[0];
+          setContactForm({ ...contactForm, img: source.uri });
+          console.log(source);
+        }
+      });
+    } catch (error) {
+      console.error('ImagePicker Error:', error);
+    }
+  };
 
   const onDelete = async () => {
     try {
@@ -110,14 +145,28 @@ export const EditContactInfo = ({
           <TouchableOpacity onPress={onDelete}>
             <Text className="text-sm text-red-600">Delete Contact</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="my-5">
-            <View className="w-24 h-24 border-2 border-stroke rounded-full">
+          <TouchableOpacity
+            onPress={onImageEdit}
+            className="mt-5 mb-2 items-center justify-center rounded-full"
+          >
+            <View className="w-24 h-24 ">
               <Image
-                source={contact.img || icons.profile}
-                className="h-full w-full"
-                tintColor={contact.img ? '' : '#ff8e3c'}
+                source={
+                  contactForm.img ? { uri: contactForm.img } : icons.profile
+                }
+                className="h-full w-full rounded-full"
+                tintColor={contactForm.img === '' ? '#ff8e3c' : null}
+                resizeMode="cover"
               />
             </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={onImageEdit}
+            className="items-center justify-center"
+          >
+            <Text className="mb-5 text-sm text-stroke underline">
+              Edit Image
+            </Text>
           </TouchableOpacity>
           <FormField
             title="Contact Name"

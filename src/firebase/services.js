@@ -1,7 +1,8 @@
 import { Filter, firestore } from '@react-native-firebase/firestore';
-
+import storage from '@react-native-firebase/storage';
 import { firebase } from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
+import { utils } from '@react-native-firebase/app';
 
 const db = firebase.firestore();
 
@@ -381,21 +382,29 @@ export const getUserTotalOutcome = async (user) => {
 
 export const postContactData = async (user, form, contact) => {
   try {
+    let imageUrl = form.img;
+    if (form.img && !form.img.startsWith('https://')) {
+      const storageRef = storage().ref(
+        `contactImages/${user.id}/${new Date().getTime()}`,
+      );
+      await storageRef.putFile(form.img);
+      imageUrl = await storageRef.getDownloadURL();
+    }
+
     const newContact = {
-      img: '' || form.img,
+      img: imageUrl || '',
       name: form.name,
       phone: form.phone,
     };
 
     const userDocRef = db.collection('users').doc(user.id);
-
     let updateData;
+
     if (!contact) {
       updateData = [...user.contacts, newContact];
     } else {
       const userSnapshot = await userDocRef.get();
       const userData = userSnapshot.data();
-      // console.log(userData);
       const updateContact = userData.contacts.map((snapshotContact) => {
         if (
           snapshotContact.phone === contact.phone &&
@@ -403,12 +412,9 @@ export const postContactData = async (user, form, contact) => {
         ) {
           return newContact;
         }
-
         return snapshotContact;
       });
-
       updateData = updateContact;
-      console.log(updateData);
     }
 
     await userDocRef.update({ contacts: updateData });
@@ -417,8 +423,7 @@ export const postContactData = async (user, form, contact) => {
     const updatedUserSnapshot = await userDocRef.get();
     const userData = updatedUserSnapshot.data();
     userData.id = updatedUserSnapshot.id;
-    // console.log('userData:', userData);
-    // console.log('userData contacts: ', userData.contacts);
+
     return userData;
   } catch (error) {
     console.log(error.message);
