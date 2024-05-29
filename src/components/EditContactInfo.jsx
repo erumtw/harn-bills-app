@@ -64,8 +64,6 @@ export const EditContactInfo = ({
         return;
       }
 
-
-
       const updateUserData = await postContactData(user, contactForm, contact);
       // console.log('updateUserData:', updateUserData);
       setUser(updateUserData);

@@ -13,7 +13,7 @@ import CustomButton from '../../components/CustomButton';
 import BillCard from '../../components/BillCard';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import { Logo } from '../../components/Logo';
-import { getUserUnpaidBill } from '../../firebase/services';
+import { getUserUnpaidBill, getBillTotalPrice, getUserBillDividedPrice } from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
@@ -27,11 +27,19 @@ const Home = ({ navigation }) => {
     try {
       setLoading(true);
 
-      // const user.id = await getUserId(user.phone);
       const bills = await getUserUnpaidBill(user);
       console.log('unpaid bills of', user.id, ' : ', bills);
 
-      setBillData(bills);
+      // Fetch additional data for each bill
+      const detailedBillData = await Promise.all(
+        bills.map(async (bill) => {
+          const dividedPrice = await getUserBillDividedPrice(user.phone, bill.id);
+          const totalPrice = await getBillTotalPrice(bill.id);
+          return { ...bill, dividedPrice, totalPrice };
+        })
+      );
+
+      setBillData(detailedBillData);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -46,7 +54,7 @@ const Home = ({ navigation }) => {
       }
 
       fetchData();
-    }, [isLogged]),
+    }, [isLogged])
   );
 
   const onRefresh = async () => {

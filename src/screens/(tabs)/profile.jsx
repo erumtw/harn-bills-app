@@ -14,21 +14,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import icons from '../../constants/icons';
 import ProfileInfo from '../../components/ProfileInfo';
 import BillCard from '../../components/BillCard';
-import {
-  get_user_all_bills,
-  get_user_total_paid,
-} from '../../api/constant/services';
 import CustomButton from '../../components/CustomButton';
 import {
   getUserBills,
   getUserTotalOutcome,
-  getUserTotalPaid,
+  getBillTotalPrice,
+  getUserBillDividedPrice,
 } from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({ navigation }) => {
   const { user, setUser, isLogged, setIsLogged } = useGlobalContext();
   const [data, setData] = useState([]);
+  const [billData, setBillData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [totalOutcome, setTotalOutcome] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -40,10 +38,21 @@ const Profile = ({ navigation }) => {
       const bills = await getUserBills(user);
       const total_outcome = await getUserTotalOutcome(user);
 
+      // Fetch additional data for each bill
+      const detailedBillData = await Promise.all(
+        bills.map(async (bill) => {
+          const dividedPrice = await getUserBillDividedPrice(
+            user.phone,
+            bill.id,
+          );
+          const totalPrice = await getBillTotalPrice(bill.id);
+          return { ...bill, dividedPrice, totalPrice };
+        }),
+      );
+
       setData(bills);
+      setBillData(detailedBillData);
       setTotalOutcome(total_outcome);
-      console.log('user bills', data);
-      console.log(totalOutcome);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -69,9 +78,8 @@ const Profile = ({ navigation }) => {
 
   const sign_out = async () => {
     try {
-      await AsyncStorage.removeItem('user');
-      // console.log(user);
       setLoading(true);
+      await AsyncStorage.removeItem('user');
       setIsLogged(false);
       navigation.replace('(auth)', { screen: 'sign-in' });
     } catch (error) {
@@ -85,12 +93,14 @@ const Profile = ({ navigation }) => {
   return (
     <SafeAreaView>
       {isLoading ? (
-        <ActivityIndicator style={{ flex: 1 }} />
+        <ActivityIndicator
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          size="large"
+        />
       ) : (
         <FlatList
           contentContainerStyle={{ padding: 20 }}
-          data={data}
-          // keyExtractor={(item) => item.id}
+          data={billData}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -113,7 +123,6 @@ const Profile = ({ navigation }) => {
                 className="w-16 h-16"
                 tintColor="#ff8e3c"
               />
-
               <View className="flex-row justify-center items-center mt-3">
                 <Text className="text-2xl font-bold text-headline mr-2">
                   {user.username[0].toUpperCase()}
@@ -130,7 +139,6 @@ const Profile = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               </View>
-
               <View className="flex-row justify-between mt-3">
                 <ProfileInfo
                   title="Bill Count"
@@ -139,7 +147,6 @@ const Profile = ({ navigation }) => {
                 />
                 <ProfileInfo title="Total Paid" subtitle={`$${totalOutcome}`} />
               </View>
-
               <View className="w-full h-[1px] bg-headline my-5 rounded-lg" />
               <Text className="text-lg text-headline font-semibold">
                 Bills History
