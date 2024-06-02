@@ -8,17 +8,15 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import FormField from './FormField.jsx';
-import icons from '../constants/icons';
+import icons from '../constants/icons.js';
 import { useGlobalContext } from '../contexts/GlobalContext.js';
 import {
   deleteContact,
   postContactData,
-  uploadImage,
 } from '../firebase/services.js';
 import { launchImageLibrary } from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
 
-export const EditContactInfo = ({
+export const ModalEditContactInfo = ({
   contact,
   isModalVisible,
   setModalVisible,
@@ -138,48 +136,9 @@ export const EditContactInfo = ({
       visible={isModalVisible}
       onRequestClose={closeModal}
     >
-      <View className="flex-1 justify-end items-center ">
-        <View className="h-full w-full justify-start items-center rounded-t-2xl  bg-primary p-10">
-          <TouchableOpacity onPress={onDelete}>
-            <Text className="text-sm text-red-600">Delete Contact</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onImageEdit}
-            className="mt-5 mb-2 items-center justify-center rounded-full"
-          >
-            <View className="w-24 h-24 ">
-              <Image
-                source={
-                  contactForm.img ? { uri: contactForm.img } : icons.profile
-                }
-                className="h-full w-full rounded-full"
-                tintColor={contactForm.img === '' ? '#ff8e3c' : null}
-                resizeMode="cover"
-              />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onImageEdit}
-            className="items-center justify-center"
-          >
-            <Text className="mb-5 text-sm text-stroke underline">
-              Edit Image
-            </Text>
-          </TouchableOpacity>
-          <FormField
-            title="Contact Name"
-            handleChange={(e) => setContactForm({ ...contactForm, name: e })}
-            placeholder="Enter Contact Name"
-            value={contactForm.name}
-            otherStyles={`mb-2`}
-          />
-          <FormField
-            title="Contact Phone-number"
-            handleChange={(e) => setContactForm({ ...contactForm, phone: e })}
-            placeholder="Enter Contact Phone-number"
-            value={contactForm.phone}
-          />
-          <View className="flex-row gap-x-6">
+      <View className="h-full justify-end items-center">
+        <View className="h-full w-full justify-center items-center rounded-t-2xl  bg-primary py-14 px-10">
+          <View className="flex-row w-full justify-between ">
             <TouchableOpacity onPress={closeModal}>
               <View className="rounded-lg py-1 px-3 mt-6 mb-2">
                 <Text className="text-lg font-bold text-stroke">Cancle</Text>
@@ -195,10 +154,51 @@ export const EditContactInfo = ({
               </View>
             </TouchableOpacity>
           </View>
+          <View className="h-full w-full justify-start items-center">
+            <TouchableOpacity
+              onPress={onImageEdit}
+              className="mt-10 mb-2 items-center justify-center rounded-full"
+            >
+              <View className="w-24 h-24 ">
+                <Image
+                  source={
+                    contactForm.img ? { uri: contactForm.img } : icons.profile
+                  }
+                  className="h-full w-full rounded-full"
+                  tintColor={contactForm.img === '' ? '#ff8e3c' : null}
+                  resizeMode="cover"
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onImageEdit}
+              className="items-center justify-center"
+            >
+              <Text className="mb-8 text-sm text-stroke">
+                Edit Image
+              </Text>
+            </TouchableOpacity>
+            <FormField
+            title="Contact Name"
+              handleChange={(e) => setContactForm({ ...contactForm, name: e })}
+              placeholder="Enter Contact Name"
+              value={contactForm.name}
+              otherStyles={`mb-5`}
+            />
+            <FormField
+              title="Contact Phone-number"
+              handleChange={(e) => setContactForm({ ...contactForm, phone: e })}
+              placeholder="Enter Contact Phone-number"
+              value={contactForm.phone}
+            />
+          </View>
+          <TouchableOpacity onPress={onDelete} className="content-end">
+            <Text className="text-sm text-red-600">Delete Contact</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
   );
 };
 
-export default EditContactInfo;
+export default ModalEditContactInfo;

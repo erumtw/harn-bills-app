@@ -4,7 +4,6 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,20 +12,20 @@ import ItemCard from '../../components/ItemCard';
 import {
   checkAndUpdateBillStatus,
   getBillItems,
-  getUserBillDividedPrice,
-  updateBillStatus,
   updateMemberPaidStatus,
 } from '../../firebase/services';
-import icons from '../../constants/icons';
+import BillMembersCard from '../../components/BillMembersList';
+import BillReceipt from '../../components/BillReceipt';
 
 const Bill = ({ route, navigation }) => {
   const { user } = useGlobalContext();
   let { bill } = route.params;
-  const [itemVisible, setItemVisible] = useState(false);
+  const [itemVisible, setItemVisible] = useState(true);
   const [isPaid, setIsPaid] = useState(bill.status);
   const [items, setItems] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [billState, setBill] = useState(bill);
+  const [isModalExportVisible, setModalExportVisible] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,65 +71,25 @@ const Bill = ({ route, navigation }) => {
     }
   };
 
-  const renderMember = async ({ item: member }) => {
-    const user_divided_price = await getUserBillDividedPrice(
-      member.memberPhone,
-      billState.id,
-    );
-
-    return (
-      <View
-        className={`flex-row w-1/2 px-3 py-1 mb-2 border-2  ${
-          member.isPaid ? 'border-secondary' : 'border-gray-700'
-        } rounded-lg justify-between  items-center mr-2`}
-      >
-        <View>
-          <View className="mr-2">
-            <Text
-              className={`font-medium text-lg ${
-                member.isPaid ? 'text-secondary' : 'text-stroke'
-              }`}
-            >
-              {member.membername === user.username ? 'You' : member.membername}{' '}
-              <Text className="font-bold">${user_divided_price}</Text>
-            </Text>
-            <Text
-              className={`font-medium text-xs ${
-                member.isPaid ? 'text-secondary' : 'text-stroke'
-              }`}
-            >
-              {member.isPaid ? 'Paid' : 'Unpaid'}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          onPress={() => onChangeIsPaid(member)}
-          disabled={member.isPaid}
-          className="w-6 h-6"
-        >
-          {member.isPaid ? (
-            <Image
-              source={icons.check_mark}
-              className="w-full h-full"
-              tintColor={`${member.isPaid ? '#ff8e3c' : 'gray'}`}
-            />
-          ) : (
-            <View className="h-full w-full border-2 border-stroke rounded-full" />
-          )}
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const onExport = () => setModalExportVisible(true);
 
   const renderContent = () => {
     return (
       <View className="w-full p-5">
-        <TouchableOpacity
-          className="justify-center items-start"
-          onPress={() => navigation.goBack()}
-        >
-          <Text className="text-base text-paragraph">Go back</Text>
-        </TouchableOpacity>
+        <View className="flex-row justify-between">
+          <TouchableOpacity
+            className="justify-center items-start"
+            onPress={() => navigation.goBack()}
+          >
+            <Text className="text-base text-paragraph">Go back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="justify-center items-start"
+            onPress={onExport}
+          >
+            <Text className="text-base text-paragraph">Export</Text>
+          </TouchableOpacity>
+        </View>
         <Text className="font-bold text-2xl text-headline my-3">Bill Name</Text>
         <Text className="font-bold text-2xl text-secondary">
           {billState.bill_name}
@@ -140,41 +99,27 @@ const Bill = ({ route, navigation }) => {
           <Text className="font-bold text-xl text-secondary">
             {isPaid ? 'Cleared' : 'Unclear'}
           </Text>
-          {/* <CustomButton
-            title="Clear Bill"
-            isSubmit={isPaid}
-            containerStyles="items-center justify-center ml-2 h-[40px]"
-            handlePress={async () => {
-              const updatedBill = await updateBillStatus(bill.id, true);
-              setIsPaid(true);
-              bill = updatedBill;
-              console.log('updated bill', bill);
-            }}
-          /> */}
         </View>
-        <Text className="font-bold text-2xl text-headline my-3">Divider</Text>
+        <Text className="font-bold text-2xl text-headline my-3">Members</Text>
         <View className="w-full">
           {console.log(billState.members)}
           <FlatList
             numColumns={2}
             data={billState.members}
-            renderItem={renderMember}
-            // keyExtractor={(item) => item}
-            // showsHorizontalScrollIndicator={false}
+            renderItem={({ item: member }) => (
+              <BillMembersCard
+                member={member}
+                billState={billState}
+                onChangeIsPaid={onChangeIsPaid}
+                items={items}
+              />
+            )}
           />
         </View>
         <Text className="font-bold text-2xl text-headline mt-3 mb-1">
           Items List
         </Text>
         <View className="w-full">
-          <TouchableOpacity
-            className="items-center justify-center my-1"
-            onPress={() => setItemVisible(!itemVisible)}
-          >
-            <Text className="text-paragraph font-medium underline">
-              {!itemVisible ? 'show items' : 'hide items'}
-            </Text>
-          </TouchableOpacity>
           {/* <View className="w-full/2 h-[1px] bg-stroke my-2 rounded-lg" /> */}
           {itemVisible ? (
             <FlatList
@@ -183,7 +128,6 @@ const Bill = ({ route, navigation }) => {
               renderItem={({ item }) => (
                 <ItemCard item={item} bill={billState} />
               )}
-              // keyExtractor={(item) => `${item.title}-${item.price}`}
             />
           ) : (
             <View>
@@ -200,9 +144,24 @@ const Bill = ({ route, navigation }) => {
   return (
     <SafeAreaView className="h-full bg-[#fef6e4]">
       {isLoading ? (
-        <ActivityIndicator style={{ flex: 1 }} />
+        <View className="h-full">
+          <View className="h-full w-full items-center justify-start">
+            <ActivityIndicator style={{ flex: 1 }} />
+          </View>
+        </View>
       ) : (
-        <FlatList data={[1]} renderItem={() => renderContent()} />
+        <>
+          <FlatList data={[1]} renderItem={() => renderContent()} />
+          {isModalExportVisible && (
+            <BillReceipt
+              bill={billState}
+              items={items}
+              members={billState.members}
+              isModalExportVisible={isModalExportVisible}
+              setModalExportVisible={setModalExportVisible}
+            />
+          )}
+        </>
       )}
     </SafeAreaView>
   );

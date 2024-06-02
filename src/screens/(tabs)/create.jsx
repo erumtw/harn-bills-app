@@ -166,7 +166,12 @@ const Create = ({ navigation }) => {
   return (
     <SafeAreaView className="h-full">
       {isLoading ? (
-        <ActivityIndicator style={{ flex: 1 }} />
+        <View className="h-full">
+          <ActivityIndicator
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            size="large"
+          />
+        </View>
       ) : (
         <FlatList
           data={[1]}

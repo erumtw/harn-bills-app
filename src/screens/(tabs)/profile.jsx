@@ -22,18 +22,23 @@ import {
   getUserBillDividedPrice,
 } from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
+import ModalEditProfile from '../../components/ModalEditProfile';
 
 const Profile = ({ navigation }) => {
   const { user, setUser, isLogged, setIsLogged } = useGlobalContext();
   const [data, setData] = useState([]);
-  const [billData, setBillData] = useState([]);
+  const [DividedPriceBillData, setDividedPriceBillData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [totalOutcome, setTotalOutcome] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [isModalEditProfileVisible, setModalEditProfileVisible] =
+    useState(false);
 
   const fetchData = async () => {
     try {
-      setLoading(true);
+      if (!isLoading) {
+        setLoading(true);
+      }
 
       const bills = await getUserBills(user);
       const total_outcome = await getUserTotalOutcome(user);
@@ -49,9 +54,10 @@ const Profile = ({ navigation }) => {
           return { ...bill, dividedPrice, totalPrice };
         }),
       );
-
+      console.log("user", user);
+      console.log("total_outcome", total_outcome);
       setData(bills);
-      setBillData(detailedBillData);
+      setDividedPriceBillData(detailedBillData);
       setTotalOutcome(total_outcome);
     } catch (error) {
       console.log(error.message);
@@ -93,68 +99,97 @@ const Profile = ({ navigation }) => {
   return (
     <SafeAreaView>
       {isLoading ? (
-        <ActivityIndicator
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          size="large"
-        />
+        <View className="h-full">
+          <View className="h-full w-full items-center justify-start">
+            <ActivityIndicator style={{ flex: 1 }} />
+          </View>
+        </View>
       ) : (
-        <FlatList
-          contentContainerStyle={{ padding: 20 }}
-          data={billData}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListEmptyComponent={() => (
-            <View className="w-full justify-center items-center">
-              <Text className="text-headline">
-                Well done! you have no bills
-              </Text>
-              <CustomButton
-                title="Let's Create Bill!"
-                itemsStyles="items-center"
-                containerStyles="h-[40px] my-3"
-              />
-            </View>
-          )}
-          ListHeaderComponent={() => (
-            <View className="w-full justify-center items-center my-5">
-              <Image
-                source={icons.profile}
-                className="w-16 h-16"
-                tintColor="#ff8e3c"
-              />
-              <View className="flex-row justify-center items-center mt-3">
-                <Text className="text-2xl font-bold text-headline mr-2">
-                  {user.username[0].toUpperCase()}
-                  {user.username.slice(1)}
+        <>
+          <FlatList
+            maxToRenderPerBatch={8}
+            contentContainerStyle={{ padding: 20 }}
+            data={DividedPriceBillData}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={() => (
+              <View className="w-full justify-center items-center">
+                <Text className="text-headline">
+                  Well done! you have no bills
                 </Text>
+                <CustomButton
+                  title="Let's Create Bill!"
+                  itemsStyles="items-center"
+                  containerStyles="h-[40px] my-3"
+                  handlePress={() =>
+                    navigation.replace('(tabs)', { screen: 'create' })
+                  }
+                />
+              </View>
+            )}
+            ListHeaderComponent={() => (
+              <View className="w-full justify-center items-center my-5">
                 <TouchableOpacity
-                  className="justify-center items-center"
-                  onPress={sign_out}
+                  onPress={() => setModalEditProfileVisible(true)}
+                >
+                  <Text className="text-sm text-stroke my-2">Edit Profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setModalEditProfileVisible(true)}
                 >
                   <Image
-                    source={icons.log_out}
-                    className="w-8 h-8"
-                    tintColor="#ff8e3c"
+                    source={
+                      user.image === '' ? icons.profile : { uri: user.image }
+                    }
+                    className="w-24 h-24 rounded-full"
+                    tintColor={user.image === '' ? '#ff8e3c' : null}
+                    resizeMode="cover"
                   />
                 </TouchableOpacity>
+                <View className="flex-row justify-center items-center mt-3">
+                  <Text className="text-2xl font-bold text-headline mr-2">
+                    {user.username[0].toUpperCase()}
+                    {user.username.slice(1)}
+                  </Text>
+                  <TouchableOpacity
+                    className="justify-center items-center"
+                    onPress={sign_out}
+                  >
+                    <Image
+                      source={icons.log_out}
+                      className="w-8 h-8"
+                      tintColor="#ff8e3c"
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View className="flex-row justify-between mt-3">
+                  <ProfileInfo
+                    title="Bill Count"
+                    subtitle={data.length}
+                    otherStyles="mr-5"
+                  />
+                  <ProfileInfo
+                    title="Total Price"
+                    subtitle={`$${totalOutcome}`}
+                  />
+                </View>
+                <View className="w-full h-[1px] bg-headline my-5 rounded-lg" />
+                <Text className="text-lg text-headline font-semibold">
+                  Bills History
+                </Text>
               </View>
-              <View className="flex-row justify-between mt-3">
-                <ProfileInfo
-                  title="Bill Count"
-                  subtitle={data.length}
-                  otherStyles="mr-5"
-                />
-                <ProfileInfo title="Total Paid" subtitle={`$${totalOutcome}`} />
-              </View>
-              <View className="w-full h-[1px] bg-headline my-5 rounded-lg" />
-              <Text className="text-lg text-headline font-semibold">
-                Bills History
-              </Text>
-            </View>
+            )}
+            renderItem={({ item }) => <BillCard bill={item} />}
+          />
+
+          {isModalEditProfileVisible && (
+            <ModalEditProfile
+              isModalEditProfileVisible={isModalEditProfileVisible}
+              setModalEditProfileVisible={setModalEditProfileVisible}
+            />
           )}
-          renderItem={({ item }) => <BillCard bill={item} />}
-        />
+        </>
       )}
     </SafeAreaView>
   );

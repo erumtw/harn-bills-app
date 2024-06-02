@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import icons from '../constants/icons';
-import EditContactInfo from './EditContactInfo.jsx';
+import ModalEditContactInfo from './ModalEditContactInfo.jsx';
 
 const ContactCard = ({ contact, setContactData }) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -14,7 +14,7 @@ const ContactCard = ({ contact, setContactData }) => {
         }}
       >
         <View className="flex-row justify-start items-center mb-1 rounded-lg py-2 border-2 border-secondary ">
-          <View className="w-12 h-12 ml-3 bg-black-200 rounded-full border-2 border-secondary">
+          <View className="w-14 h-14 ml-3 bg-black-200 rounded-full border-2 border-secondary">
             <Image
               source={contact.img !== '' ? { uri: contact.img } : icons.profile}
               className="w-full h-full rounded-full"
@@ -33,7 +33,7 @@ const ContactCard = ({ contact, setContactData }) => {
         </View>
       </TouchableOpacity>
       {isModalVisible && (
-        <EditContactInfo
+        <ModalEditContactInfo
           contact={contact}
           isModalVisible={isModalVisible}
           setModalVisible={setModalVisible}

@@ -13,7 +13,11 @@ import CustomButton from '../../components/CustomButton';
 import BillCard from '../../components/BillCard';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import { Logo } from '../../components/Logo';
-import { getUserUnpaidBill, getBillTotalPrice, getUserBillDividedPrice } from '../../firebase/services';
+import {
+  getUserUnpaidBill,
+  getBillTotalPrice,
+  getUserBillDividedPrice,
+} from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
@@ -33,10 +37,13 @@ const Home = ({ navigation }) => {
       // Fetch additional data for each bill
       const detailedBillData = await Promise.all(
         bills.map(async (bill) => {
-          const dividedPrice = await getUserBillDividedPrice(user.phone, bill.id);
+          const dividedPrice = await getUserBillDividedPrice(
+            user.phone,
+            bill.id,
+          );
           const totalPrice = await getBillTotalPrice(bill.id);
           return { ...bill, dividedPrice, totalPrice };
-        })
+        }),
       );
 
       setBillData(detailedBillData);
@@ -54,7 +61,7 @@ const Home = ({ navigation }) => {
       }
 
       fetchData();
-    }, [isLogged])
+    }, [isLogged]),
   );
 
   const onRefresh = async () => {
@@ -67,7 +74,9 @@ const Home = ({ navigation }) => {
     <SafeAreaView>
       <View className="flex w-full mt-3 px-5">
         {isLoading ? (
-          <ActivityIndicator style={{ flex: 1 }} />
+          <View className="h-full w-full items-center justify-start">
+            <ActivityIndicator style={{ flex: 1 }} />
+          </View>
         ) : (
           <FlatList
             data={billData}

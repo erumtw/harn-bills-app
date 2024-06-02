@@ -8,6 +8,7 @@ const FormField = ({
   placeholder,
   handleChange,
   otherStyles,
+  editable,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,12 +26,15 @@ const FormField = ({
 
       <View className="flex-row px-5 h-[50px] w-full border-2 border-stroke rounded-lg items-center focus:border-highlight bg-primary">
         <TextInput
-          className="flex-1 text-paragraph text-sm font-medium"
+          className={`flex-1 text-paragraph text-sm font-medium ${
+            editable === false ? 'opacity-40' : 'opacity-100'
+          } `}
           value={value}
           onChangeText={handleChange}
           placeholder={placeholder}
           placeholderTextColor="#7b7b8b"
           secureTextEntry={title === 'password' && !showPassword}
+          editable={editable}
         />
         {title === 'password' ? (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>

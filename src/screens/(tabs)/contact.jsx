@@ -68,7 +68,9 @@ const Contact = ({ navigation }) => {
   return (
     <SafeAreaView className="flex-1 bg-primary">
       {isLoading ? (
-        <ActivityIndicator style={{ flex: 1 }} />
+        <View className="h-full w-full items-center justify-start">
+          <ActivityIndicator style={{ flex: 1 }} />
+        </View>
       ) : (
         <>
           <View className="flex-1 px-5 bg-primary">
@@ -91,18 +93,6 @@ const Contact = ({ navigation }) => {
               }
             />
           </View>
-          {/* <TouchableOpacity
-        className="absolute bottom-5 right-4 shadow-xl"
-        onPress={() => setModalAddContact(!modalAddContact)}
-      >
-        <View>
-          <Image
-            source={icons.add_user}
-            className=" w-11 h-11 "
-            tintColor={`#ff8e3c`}
-          />
-        </View>
-      </TouchableOpacity> */}
 
           {modalAddContact && (
             <ModalAddContacts
