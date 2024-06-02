@@ -19,7 +19,9 @@ const BillCard = ({ bill }) => {
         </Text>
         <Text
           className={`text-sm ${
-            bill.status ? 'text-green-800 font-semibold' : 'text-gray-700 font-bold'
+            bill.status
+              ? 'text-green-900 font-semibold'
+              : 'text-stroke font-bold'
           }`}
         >
           {bill.status ? 'Cleared' : 'Unclear'}
@@ -29,8 +31,8 @@ const BillCard = ({ bill }) => {
         <Text className="text-sm font-semibold text-highlight">
           You: <Text className="text-base">${bill.dividedPrice}</Text>
         </Text>
-        <Text className="text-xs font-semibold text-paragraph">
-          Total: <Text className="text-headline text-xs">${bill.totalPrice}</Text>
+        <Text className="text-xs font-semibold text-stroke">
+          Total: <Text className="text-stroke text-xs">${bill.totalPrice}</Text>
         </Text>
       </View>
     </TouchableOpacity>
