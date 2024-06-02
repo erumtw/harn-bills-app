@@ -11,16 +11,17 @@ const Tabs = createBottomTabNavigator();
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
-    <View className="flex items-center justify-center gap-2">
+    <View className="flex items-center justify-center gap-1 ">
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className="w-7 h-7"
+        className="w-9 h-9"
       />
       <Text
         className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}
         style={{ color: color }}
+        numberOfLines={1}
       >
         {name}
       </Text>
@@ -36,15 +37,18 @@ const TabLayout = () => {
   return (
     <>
       <Tabs.Navigator
-        sceneContainerStyle={{ backgroundColor: '#fef6e4' }}
+        sceneContainerStyle={{
+          backgroundColor: '#fef6e4',
+        }}
         screenOptions={{
+          tabBarHideOnKeyboard: true,
           tabBarShowLabel: false,
           tabBarActiveTintColor: '#ff8e3c',
           tabBarInactiveTintColor: '#2a2a2a',
           tabBarStyle: {
-            backgroundColor: '#fef6e4',
+            backgroundColor: '#fffff4',
             borderTopWidth: 1,
-            borderTopColor: '#fffffe',
+            borderTopColor: '#fffff4',
             height: 70,
           },
         }}
@@ -118,7 +122,7 @@ const TabLayout = () => {
         />
       </Tabs.Navigator>
 
-      <StatusBar backgroundColor='#fef6e4' barStyle="dark-content" />
+      <StatusBar backgroundColor="#fef6e4" barStyle="dark-content" />
     </>
   );
 };

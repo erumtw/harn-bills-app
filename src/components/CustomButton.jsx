@@ -19,12 +19,12 @@ const CustomButton = ({
     >
       <View className={`flex-row items-center w-full ${itemsStyles}`}>
         {title ? (
-          <Text className="font-semibold text-lg text-button_text">{title}</Text>
+          <Text className="font-semibold text-lg text-gray-900">{title}</Text>
         ) : (
           <></>
         )}
 
-        {icon ? <Image source={icon} className="h-6 w-6" /> : <></>}
+        {icon ? <Image source={icon} className="h-7 w-7" tintColor="#111827"/> : <></>}
       </View>
     </TouchableOpacity>
   );

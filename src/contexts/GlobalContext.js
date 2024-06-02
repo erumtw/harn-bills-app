@@ -6,7 +6,8 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { get_current_user } from '../api/constant/services';
+// import { get_current_user } from '../api/constant/services';
+import { getCurrentUser } from '../firebase/services';
 
 const GlobalContext = createContext();
 
@@ -17,7 +18,7 @@ export const GlobalProvider = ({ children }) => {
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    get_current_user()
+    getCurrentUser()
       .then((res) => {
         if (res) {
           setUser(res);

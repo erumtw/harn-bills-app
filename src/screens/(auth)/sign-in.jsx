@@ -67,7 +67,7 @@ const SignIn = ({ navigation }) => {
 
       // navigation.replace('(tabs)', { screen: 'home' });
     } catch (error) {
-      Alert.alert('Invalid Sign In', error.message);
+      Alert.alert('Invalid Sign in', error.message);
     } finally {
       setSubmit(false);
       setIsLoading(false);
@@ -82,7 +82,7 @@ const SignIn = ({ navigation }) => {
       <ScrollView>
         {isLoading ? (
           <View className="h-full w-full items-center justify-start">
-            <ActivityIndicator />
+            <ActivityIndicator style={{ flex: 1 }} />
           </View>
         ) : (
           <View className="justify-center px-9">
@@ -102,7 +102,7 @@ const SignIn = ({ navigation }) => {
               otherStyles="mt-5"
             />
             <CustomButton
-              title="Sign In"
+              title="Sign in"
               containerStyles="mt-8 items-center h-[45px]"
               handlePress={onSubmit}
               itemsStyles="justify-center"

@@ -1,35 +1,9 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigation } from '@react-navigation/native';
-import { useGlobalContext } from '../contexts/GlobalContext';
-import {
-  get_total_bill_price,
-  get_user_divided_price,
-} from '../api/constant/services';
-import { getBillTotalPrice, getUserDividedPrice } from '../firebase/services';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const BillCard = ({ bill }) => {
   const navigation = useNavigation();
-  const { user } = useGlobalContext();
-  const [dividedPrice, setDividedPrice] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
-
-  const fetchData = async () => {
-    try {
-      // console.log('fetching price of billId:', bill.id);
-      const divided_price = await getUserDividedPrice(user.phone, bill.id);
-      const total_bill_price = await getBillTotalPrice(bill.id);
-
-      setDividedPrice(divided_price);
-      setTotalPrice(total_bill_price);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <TouchableOpacity
@@ -43,16 +17,22 @@ const BillCard = ({ bill }) => {
           {bill.bill_name[0].toUpperCase()}
           {bill.bill_name.slice(1)}
         </Text>
-        <Text className="text-sm font-semibold text-paragraph">
-          {bill.status ? 'Cleared' : 'Unpaid'}
+        <Text
+          className={`text-sm ${
+            bill.status
+              ? 'text-green-900 font-semibold'
+              : 'text-stroke font-bold'
+          }`}
+        >
+          {bill.status ? 'Cleared' : 'Unclear'}
         </Text>
       </View>
       <View className="items-end">
-        <Text className="text-sm font-semibold  text-highlight">
-          You: <Text className="text-base">${dividedPrice}</Text>
+        <Text className="text-sm font-semibold text-highlight">
+          You: <Text className="text-base">${bill.dividedPrice}</Text>
         </Text>
-        <Text className="text-xs font-semibold text-paragraph">
-          Total: <Text className="text-headline text-xs">${totalPrice}</Text>
+        <Text className="text-xs font-semibold text-stroke">
+          Total: <Text className="text-stroke text-xs">${bill.totalPrice}</Text>
         </Text>
       </View>
     </TouchableOpacity>

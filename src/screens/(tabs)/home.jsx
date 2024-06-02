@@ -1,23 +1,24 @@
 import {
   View,
   Text,
-  Image,
-  ScrollView,
   FlatList,
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
-import { get_user_unpaid_bills } from '../../api/constant/services';
 import BillCard from '../../components/BillCard';
 import { useGlobalContext } from '../../contexts/GlobalContext';
 import { Logo } from '../../components/Logo';
-import firestore from '@react-native-firebase/firestore';
-import { getUserId, getUserUnpaidBill } from '../../firebase/services';
+import {
+  getUserUnpaidBill,
+  getBillTotalPrice,
+  getUserBillDividedPrice,
+} from '../../firebase/services';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
   const { user, isLogged } = useGlobalContext();
@@ -26,23 +27,26 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  if (!isLogged) {
-    navigation.replace('(auth)', { screen: 'sign-in' });
-  }
-
   const fetchData = async () => {
     try {
       setLoading(true);
 
-      // const user.id = await getUserId(user.phone);
       const bills = await getUserUnpaidBill(user);
       console.log('unpaid bills of', user.id, ' : ', bills);
 
-      if (bills.length > 0) {
-        setBillData(bills);
-      } else {
-        console.log('No unpaid bills found for user', user.phone);
-      }
+      // Fetch additional data for each bill
+      const detailedBillData = await Promise.all(
+        bills.map(async (bill) => {
+          const dividedPrice = await getUserBillDividedPrice(
+            user.phone,
+            bill.id,
+          );
+          const totalPrice = await getBillTotalPrice(bill.id);
+          return { ...bill, dividedPrice, totalPrice };
+        }),
+      );
+
+      setBillData(detailedBillData);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -50,9 +54,15 @@ const Home = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (!isLogged) {
+        navigation.replace('(auth)', { screen: 'sign-in' });
+      }
+
+      fetchData();
+    }, [isLogged]),
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -61,19 +71,17 @@ const Home = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="h-full">
-      <View className="flex w-full p-5">
+    <SafeAreaView>
+      <View className="flex w-full mt-3 px-5">
         {isLoading ? (
-          <ActivityIndicator />
+          <View className="h-full w-full items-center justify-start">
+            <ActivityIndicator style={{ flex: 1 }} />
+          </View>
         ) : (
           <FlatList
             data={billData}
-            // keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <>
-                <BillCard bill={item} />
-              </>
-            )}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item: bill }) => <BillCard bill={bill} />}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -121,7 +129,7 @@ const Home = ({ navigation }) => {
                 <TouchableOpacity
                   onPress={() => navigation.navigate('profile')}
                 >
-                  <Text className="text-paragraph font-semibold">
+                  <Text className="text-paragraph font-semibold underline">
                     see all bills
                   </Text>
                 </TouchableOpacity>

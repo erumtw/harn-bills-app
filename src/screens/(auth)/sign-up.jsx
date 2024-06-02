@@ -73,7 +73,7 @@ const SignIn = ({ navigation }) => {
       <ScrollView>
         {isLoading ? (
           <View className="h-full w-full items-center justify-start">
-            <ActivityIndicator />
+            <ActivityIndicator style={{ flex: 1 }} />
           </View>
         ) : (
           <View className="justify-center px-9">
