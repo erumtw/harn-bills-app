@@ -362,14 +362,14 @@ export const getUserTotalOutcome = async (user) => {
     const userBills = await getUserBills(user);
 
     // Filter out the bills where the user has paid
-    const paidBills = userBills.filter((bill) =>
-      bill.members.some(
-        (member) => member.memberPhone === user.phone && member.isPaid,
-      ),
-    );
+    // const paidBills = userBills.filter((bill) =>
+    //   bill.members.some(
+    //     (member) => member.memberPhone === user.phone && member.isPaid,
+    //   ),
+    // );
 
     // Calculate the total amount the user has paid
-    for (const bill of paidBills) {
+    for (const bill of userBills) {
       const dividedPrice = await getUserBillDividedPrice(user.phone, bill.id);
       totalOutcome += parseFloat(dividedPrice);
     }
@@ -453,3 +453,37 @@ export const deleteContact = async (user, contact) => {
     console.log(error.message);
   }
 };
+
+export const updateProfile = async (user, profileForm) => {
+  try {
+    let imageUrl = profileForm.image;
+
+    // Check if a new image is uploaded and needs to be stored
+    if (profileForm.image && !profileForm.image.startsWith('https://')) {
+      const storageRef = storage().ref(
+        `profileImages/${user.id}/${user.id}at${new Date().getTime()}`
+      );
+      await storageRef.putFile(profileForm.image);
+      imageUrl = await storageRef.getDownloadURL();
+    }
+
+    // Update user profile in Firestore
+    await db.collection('users').doc(user.id).update({
+      image: imageUrl,
+      username: profileForm.username,
+      phone: profileForm.phone,
+    });
+
+    // Fetch updated user data
+    const userQuery = await db.collection('users').doc(user.id).get();
+    const userData = userQuery.data();
+    userData.id = user.id;
+    console.log('userData', userData);
+
+    return userData;
+  } catch (error) {
+    console.error('Error updating profile:', error.message);
+    throw new Error('Failed to update profile');
+  }
+};
+
