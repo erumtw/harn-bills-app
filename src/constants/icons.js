@@ -8,7 +8,8 @@ import log_out from '../assets/icons/log-out.png';
 import contact from '../assets/icons/contact.png';
 import add_user from '../assets/icons/add_user.png';
 import check_mark from '../assets/icons/check_mark.png';
-
+import billDivvy from '../assets/icons/billDivvy.png';
+import BlackLogo from '../assets/icons/BlackLogo.png';
 
 export default {
   home,
@@ -20,5 +21,7 @@ export default {
   log_out,
   contact,
   add_user,
-  check_mark
+  check_mark,
+  billDivvy,
+  BlackLogo
 };
