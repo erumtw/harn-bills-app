@@ -54,7 +54,7 @@ const Contact = ({ navigation }) => {
             <CustomButton
               title="Add New Contact"
               containerStyles="w-full mt-5 items-start h-[55px]"
-              icon={icons.add_user}
+              icon="account-multiple-plus"
               handlePress={() => setModalAddContact(!modalAddContact)}
               itemsStyles="justify-between"
             />

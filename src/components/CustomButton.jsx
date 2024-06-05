@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const CustomButton = ({
   handlePress,
@@ -24,7 +25,7 @@ const CustomButton = ({
           <></>
         )}
 
-        {icon ? <Image source={icon} className="h-7 w-7" tintColor="#111827"/> : <></>}
+        {icon ? <MaterialCommunityIcons name={icon} color="#111827" size={30}/> : <></>}
       </View>
     </TouchableOpacity>
   );
