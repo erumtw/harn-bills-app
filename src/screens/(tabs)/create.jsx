@@ -17,11 +17,10 @@ import AddFromContactModal from '../../components/AddFromContactModal';
 import AddItemsField from '../../components/AddItemsField';
 import ItemCreateCard from '../../components/ItemCreateCard';
 import { postBill } from '../../firebase/services';
-import { MultipleSelectList } from 'react-native-dropdown-select-list';
 
 const Create = ({ navigation }) => {
   const { user } = useGlobalContext();
-  const [itemVisible, setItemVisible] = useState(false);
+  const [itemVisible, setItemVisible] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [isModalContact, setModalContact] = useState(false);
   const [isManualAdd, setManualAdd] = useState(false);

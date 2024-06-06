@@ -19,9 +19,8 @@ const ModalMemberItems = ({
 
   const getDividedPrice = () => {
     let dividedPrice = 0;
-    items.forEach((item) => {
-      const temp = item.price / item.divider.length;
-      // console.log(temp);
+    memberItem.forEach((item) => {
+      const temp = (item.price / item.divider.length);
       dividedPrice += temp;
     });
     return dividedPrice;

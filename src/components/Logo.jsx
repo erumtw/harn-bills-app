@@ -3,20 +3,20 @@ import icons from '../constants/icons';
 
 export const Logo = ({ blackwhite }) => {
   return (
-    <View className="flex-row justify-start my-5">
+    <View className="justify-start items-start my-5">
       <Image
-        source={icons.division}
-        className="w-10 h-10"
+        source={blackwhite === true ? icons.BlackLogo : icons.billDivvy}
+        className="w-32 h-32 rounded-lg"
         resizeMode="contain"
-        tintColor={`${blackwhite ? 'black' : '#ff8e3c'}`}
+        // tintColor={`${blackwhite ? 'black' : '#ff8e3c'}`}
       />
-      <Text
-        className={`text-5xl ${
+      {/* <Text
+        className={`text-3xl ${
           blackwhite ? 'text-black' : 'text-secondary'
-        } font-bold ml-2`}
+        } font-bold ml-2 mt-3`}
       >
-        HarnBills
-      </Text>
+        easy bill split
+      </Text> */}
     </View>
   );
 };

@@ -23,6 +23,7 @@ import {
 } from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
 import ModalEditProfile from '../../components/ModalEditProfile';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Profile = ({ navigation }) => {
   const { user, setUser, isLogged, setIsLogged } = useGlobalContext();
@@ -54,8 +55,8 @@ const Profile = ({ navigation }) => {
           return { ...bill, dividedPrice, totalPrice };
         }),
       );
-      console.log("user", user);
-      console.log("total_outcome", total_outcome);
+      // console.log("user", user);
+      // console.log("total_outcome", total_outcome);
       setData(bills);
       setDividedPriceBillData(detailedBillData);
       setTotalOutcome(total_outcome);
@@ -132,8 +133,9 @@ const Profile = ({ navigation }) => {
               <View className="w-full justify-center items-center my-5">
                 <TouchableOpacity
                   onPress={() => setModalEditProfileVisible(true)}
+                  className="flex-row items-center justify-center my-2"
                 >
-                  <Text className="text-sm text-stroke my-2">Edit Profile</Text>
+                  <Text className="text-sm text-stroke">Edit Profile</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setModalEditProfileVisible(true)}
@@ -156,11 +158,12 @@ const Profile = ({ navigation }) => {
                     className="justify-center items-center"
                     onPress={sign_out}
                   >
-                    <Image
+                    {/* <Image
                       source={icons.log_out}
                       className="w-8 h-8"
                       tintColor="#ff8e3c"
-                    />
+                    /> */}
+                    <MaterialCommunityIcons name="logout" color="#ff8e3c" size={30}/>
                   </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-between mt-3">

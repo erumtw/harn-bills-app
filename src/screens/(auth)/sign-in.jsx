@@ -105,8 +105,9 @@ const SignIn = ({ navigation }) => {
               title="Sign in"
               containerStyles="mt-8 items-center h-[45px]"
               handlePress={onSubmit}
-              itemsStyles="justify-center"
+              itemsStyles="justify-center gap-x-2"
               isSubmit={submit}
+              icon="login"
             />
 
             <View className="flex-row items-center justify-center mt-2">

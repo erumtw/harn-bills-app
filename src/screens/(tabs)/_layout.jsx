@@ -6,18 +6,21 @@ import Home from './home';
 import Profile from './profile';
 import icons from '../../constants/icons';
 import Contact from './contact';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tabs = createBottomTabNavigator();
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
     <View className="flex items-center justify-center gap-1 ">
-      <Image
+      {/* <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
         className="w-9 h-9"
-      />
+      /> */}
+      <MaterialCommunityIcons name={icon} color={color} size={36}/>
+
       <Text
         className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}
         style={{ color: color }}
@@ -61,7 +64,7 @@ const TabLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.home}
+                icon="home-circle"
                 color={color}
                 name="Home"
                 focused={focused}
@@ -78,7 +81,7 @@ const TabLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.plus}
+                icon="plus-circle"
                 color={color}
                 name="Create"
                 focused={focused}
@@ -95,7 +98,7 @@ const TabLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.contact}
+                icon="account-supervisor-circle"
                 color={color}
                 name="Contact"
                 focused={focused}
@@ -112,7 +115,7 @@ const TabLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.profile}
+                icon="account-circle"
                 color={color}
                 name="Profile"
                 focused={focused}

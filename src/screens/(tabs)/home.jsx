@@ -110,7 +110,7 @@ const Home = ({ navigation }) => {
                   <CustomButton
                     title="Create New Bill"
                     containerStyles="w-full mt-5 items-start h-[55px]"
-                    icon={icons.plus_2}
+                    icon="note-plus"
                     handlePress={() =>
                       navigation.navigate('(tabs)', { screen: 'create' })
                     }

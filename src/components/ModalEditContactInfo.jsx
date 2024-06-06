@@ -15,6 +15,7 @@ import {
   postContactData,
 } from '../firebase/services.js';
 import { launchImageLibrary } from 'react-native-image-picker';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const ModalEditContactInfo = ({
   contact,
@@ -192,7 +193,8 @@ export const ModalEditContactInfo = ({
               value={contactForm.phone}
             />
           </View>
-          <TouchableOpacity onPress={onDelete} className="content-end">
+          <TouchableOpacity onPress={onDelete} className="items-center content-end justify-center mb-3" >
+            <MaterialCommunityIcons name="account-minus" color="#dc2626" size={20}/>
             <Text className="text-sm text-red-600">Delete Contact</Text>
           </TouchableOpacity>
         </View>
