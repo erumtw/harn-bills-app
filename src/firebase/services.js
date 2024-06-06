@@ -203,6 +203,7 @@ export const getBillItems = async (billId) => {
     const itemsData = [];
     itemQuery.forEach((doc) => {
       const itemSnapshot = doc.data();
+      itemSnapshot.id = doc.id;
       itemsData.push(itemSnapshot);
     });
 
@@ -461,7 +462,7 @@ export const updateProfile = async (user, profileForm) => {
     // Check if a new image is uploaded and needs to be stored
     if (profileForm.image && !profileForm.image.startsWith('https://')) {
       const storageRef = storage().ref(
-        `profileImages/${user.id}/${user.id}at${new Date().getTime()}`
+        `profileImages/${user.id}/${user.id}at${new Date().getTime()}`,
       );
       await storageRef.putFile(profileForm.image);
       imageUrl = await storageRef.getDownloadURL();
@@ -486,4 +487,3 @@ export const updateProfile = async (user, profileForm) => {
     throw new Error('Failed to update profile');
   }
 };
-

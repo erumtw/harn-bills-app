@@ -95,6 +95,7 @@ const BillReceipt = ({
   const renderItems = () => {
     return items.map((item) => (
       <View key={item.id}>
+        {/* {console.log(item.id)} */}
         <View className="flex-row w-full justify-between items-end pl-4 pr-1">
           <Text className="text-base text-headline font-normal">
             {item.title}{' '}
@@ -116,11 +117,11 @@ const BillReceipt = ({
     return (
       <View className="items-center w-full">
         <Logo blackwhite={true} />
-        <View className="w-full border-y-2 border-dotted border-headline" />
+        <View className="w-full border-y-2 pt-0.5 border-dotted border-headline" />
         <Text className="text-xl text-headline font-semibold  my-1">
           RECEIPT
         </Text>
-        <View className="border-y-2 border-dotted w-full border-headline " />
+        <View className="border-y-2 pt-0.5 border-dotted w-full border-headline " />
 
         <View className="flex-row w-full justify-between items-center mt-2 mb-1 px-1">
           <Text className="text-lg text-headline font-semibold">
@@ -189,8 +190,8 @@ const BillReceipt = ({
         </View>
 
         <View className="w-full border-t-2 border-dotted my-2" />
-        <Text className="text-center text-base font-semibold text-headline">
-          *********** THANK YOU ***********
+        <Text className="mt-2 text-center text-base font-semibold text-headline">
+          ********* THANK YOU *********
         </Text>
       </>
     );
