@@ -10,6 +10,7 @@ import add_user from '../assets/icons/add_user.png';
 import check_mark from '../assets/icons/check_mark.png';
 import billDivvy from '../assets/icons/billDivvy.png';
 import BlackLogo from '../assets/icons/BlackLogo.png';
+import google from '../assets/icons/google.png';
 
 export default {
   home,
@@ -23,5 +24,6 @@ export default {
   add_user,
   check_mark,
   billDivvy,
-  BlackLogo
+  BlackLogo,
+  google,
 };

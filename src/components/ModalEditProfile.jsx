@@ -23,6 +23,7 @@ const ModalEditProfile = ({
     image: user.image,
     phone: user.phone,
     username: user.username,
+    displayname: user.displayname,
   });
   const [isLoading, setLoading] = useState(false);
 
@@ -32,7 +33,8 @@ const ModalEditProfile = ({
     return (
       profileForm.image === user.image &&
       profileForm.username === user.username &&
-      profileForm.phone === user.phone
+      profileForm.phone === user.phone &&
+      profileForm.displayname === user.displayname
     );
   };
 
@@ -44,6 +46,7 @@ const ModalEditProfile = ({
       if (
         profileForm.username === '' ||
         profileForm.phone === '' ||
+        profileForm.displayname === '' ||
         profileForm.phone.replace(/\D/g, '').length !== 10
       ) {
         Alert.alert(
@@ -158,6 +161,14 @@ const ModalEditProfile = ({
                 </TouchableOpacity>
 
                 <View className="w-full">
+                  <FormField
+                    title={`display name`}
+                    value={profileForm.displayname}
+                    handleChange={(e) =>
+                      setProfileForm({ ...profileForm, displayname: e })
+                    }
+                    otherStyles={`mb-5`}
+                  />
                   <FormField
                     editable={false}
                     title={`username`}

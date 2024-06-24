@@ -3,7 +3,11 @@ import storage from '@react-native-firebase/storage';
 import { firebase } from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
 import { utils } from '@react-native-firebase/app';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
+// GoogleSignin.configure({
+//   webClientId: '',
+// });
 const db = firebase.firestore();
 
 export const getCurrentUser = async () => {
@@ -20,6 +24,20 @@ export const getUserId = async (phone) => {
   const userSnapshot = await db
     .collection('users')
     .where('phone', '==', phone)
+    .get();
+
+  if (userSnapshot.empty) {
+    return null;
+  }
+
+  const userDoc = userSnapshot.docs[0];
+  return userDoc.id;
+};
+
+export const getUserIdByEmail = async (email) => {
+  const userSnapshot = await db
+    .collection('users')
+    .where('email', '==', email)
     .get();
 
   if (userSnapshot.empty) {
@@ -63,21 +81,24 @@ export const signIn = async (phone) => {
   }
 };
 
-export const signUp = async (username, phone) => {
+export const signUp = async (username, phone, email) => {
   try {
-    // Check if the user already exists
-    const existingUser = await getUserId(phone);
-    if (existingUser) {
-      Alert.alert('Sign Up Invalid', 'This phone number is already in use.');
-      return;
+    if (phone !== '') {
+      const existingUser = await getUserId(phone);
+      if (existingUser) {
+        Alert.alert('Sign Up Invalid', 'This phone number is already in use.');
+        return;
+      }
     }
 
     // Create a new user document
     const newUser = {
       username: username,
+      displayname: username,
       phone: phone,
       image: '',
       contacts: [],
+      email: email,
     };
 
     const docRef = await db.collection('users').add(newUser);
@@ -473,6 +494,27 @@ export const updateProfile = async (user, profileForm) => {
       image: imageUrl,
       username: profileForm.username,
       phone: profileForm.phone,
+      displayname: profileForm.displayname,
+    });
+
+    // Fetch updated user data
+    const userQuery = await db.collection('users').doc(user.id).get();
+    const userData = userQuery.data();
+    userData.id = user.id;
+    console.log('userData', userData);
+
+    return userData;
+  } catch (error) {
+    console.error('Error updating profile:', error.message);
+    throw new Error('Failed to update profile');
+  }
+};
+
+export const updatePhoneNumber = async (user, phone) => {
+  try {
+    // Update user profile in Firestore
+    await db.collection('users').doc(user.id).update({
+      phone: phone,
     });
 
     // Fetch updated user data
