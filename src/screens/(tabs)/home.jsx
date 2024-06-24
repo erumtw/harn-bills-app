@@ -19,6 +19,7 @@ import {
   getUserBillDividedPrice,
 } from '../../firebase/services';
 import { useFocusEffect } from '@react-navigation/native';
+import ModalPhoneAsk from '../../components/ModalPhoneAsk';
 
 const Home = ({ navigation }) => {
   const { user, isLogged } = useGlobalContext();
@@ -26,6 +27,7 @@ const Home = ({ navigation }) => {
   const [billData, setBillData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [isPhoneNull, setIsPhoneNull] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -56,6 +58,10 @@ const Home = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
+      if (user.phone === '') {
+        setIsPhoneNull(true);
+      }
+
       if (!isLogged) {
         navigation.replace('(auth)', { screen: 'sign-in' });
       }
@@ -67,12 +73,21 @@ const Home = ({ navigation }) => {
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchData();
+    console.log("refresh: ", user);
     setRefreshing(false);
   };
 
   return (
     <SafeAreaView>
       <View className="flex w-full mt-3 px-5">
+        {isPhoneNull && (
+          <ModalPhoneAsk
+            isPhoneNull={isPhoneNull}
+            setIsPhoneNull={setIsPhoneNull}
+            onRefresh={onRefresh}
+          />
+        )}
+
         {isLoading ? (
           <View className="h-full w-full items-center justify-start">
             <ActivityIndicator style={{ flex: 1 }} />
@@ -99,7 +114,7 @@ const Home = ({ navigation }) => {
                 <View className="justify-center items-start mb-5">
                   <Text className="font-semibold text-2xl text-headline">
                     Welcome!{' '}
-                    <Text className="text-secondary text-3xl">
+                    <Text className="text-secondary text-2xl">
                       {user?.username}
                     </Text>
                   </Text>

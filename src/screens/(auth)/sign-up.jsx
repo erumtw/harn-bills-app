@@ -20,7 +20,7 @@ import { useGlobalContext } from '../../contexts/GlobalContext.js';
 import { Logo } from '../../components/Logo.jsx';
 import { signUp } from '../../firebase/services.js';
 
-const SignIn = ({ navigation }) => {
+const SignUp = ({ navigation }) => {
   const { isLogged, setIsLogged, setUser } = useGlobalContext();
 
   console.log(isLogged);
@@ -53,7 +53,7 @@ const SignIn = ({ navigation }) => {
     setIsLoading(true);
     try {
       // check authentication if right navigate to home else throw error
-      const user = await signUp(form.username, form.phone);
+      const user = await signUp(form.username, form.phone, '');
       console.log(user);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       setIsLogged(true);
@@ -123,4 +123,4 @@ const SignIn = ({ navigation }) => {
   );
 };
 
-export default SignIn;
+export default SignUp;

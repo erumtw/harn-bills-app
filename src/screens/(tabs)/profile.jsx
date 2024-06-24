@@ -24,6 +24,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import ModalEditProfile from '../../components/ModalEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const Profile = ({ navigation }) => {
   const { user, setUser, isLogged, setIsLogged } = useGlobalContext();
@@ -86,9 +87,13 @@ const Profile = ({ navigation }) => {
   const sign_out = async () => {
     try {
       setLoading(true);
-      await AsyncStorage.removeItem('user');
       setIsLogged(false);
+      await AsyncStorage.removeItem('user');
+      await GoogleSignin.signOut();
+      await auth().signOut();
+
       navigation.replace('(auth)', { screen: 'sign-in' });
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -151,8 +156,8 @@ const Profile = ({ navigation }) => {
                 </TouchableOpacity>
                 <View className="flex-row justify-center items-center mt-3">
                   <Text className="text-2xl font-bold text-headline mr-2">
-                    {user.username[0].toUpperCase()}
-                    {user.username.slice(1)}
+                    {user.displayname[0].toUpperCase()}
+                    {user.displayname.slice(1)}
                   </Text>
                   <TouchableOpacity
                     className="justify-center items-center"
@@ -163,7 +168,11 @@ const Profile = ({ navigation }) => {
                       className="w-8 h-8"
                       tintColor="#ff8e3c"
                     /> */}
-                    <MaterialCommunityIcons name="logout" color="#ff8e3c" size={30}/>
+                    <MaterialCommunityIcons
+                      name="logout"
+                      color="#ff8e3c"
+                      size={30}
+                    />
                   </TouchableOpacity>
                 </View>
                 <View className="flex-row justify-between mt-3">

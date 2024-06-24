@@ -14,7 +14,7 @@ const ContactCard = ({ contact, setContactData }) => {
         }}
       >
         <View className="flex-row justify-start items-center mb-1 rounded-lg py-2 border-2 border-secondary ">
-          <View className="w-14 h-14 ml-3 bg-black-200 rounded-full border-2 border-secondary">
+          <View className="w-14 h-14 ml-3 rounded-full border-2 border-secondary">
             <Image
               source={contact.img !== '' ? { uri: contact.img } : icons.profile}
               className="w-full h-full rounded-full"
